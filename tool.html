@@ -90,6 +90,14 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 #checks li{color:var(--fg2)}
 #out:not([hidden]){display:grid}
+.pick{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.btn.big{font-size:17px;padding:14px 26px}
+.muted{color:var(--fg2);font-size:14px}
+.sr{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gs{display:grid;gap:8px;width:100%}
+.gsrow{display:flex;gap:8px;max-width:640px}
+.gsrow input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--fg);background:var(--surf2);border:1px solid var(--line);border-radius:999px;padding:9px 16px}
+.drop .note a{color:var(--fg2)}
 </style></head><body>
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html">Part 3</a><a href="tool.html" aria-current="page">Tool</a></nav></header>
 <main>
@@ -97,9 +105,14 @@ details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 <p class="lead">Upload a raw performance file and get the same analysis as Part 3 in seconds: data checks, daily views, platform RPM, a weighted score, a top list, shows to avoid and a chart. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
 
 <section class="panel">
-<div class="drop" id="drop"><div><b>Drop an Excel file here</b> or <label class="btn ghost">choose a file<input type="file" id="file" accept=".xlsx,.xls,.csv" hidden></label></div>
-<p class="note">Expected: a shows sheet (title, app, release date, views) and a revenue sheet (app, revenue). Column names are matched loosely.</p>
-<button class="btn" id="sample">Or try it with the assignment data</button></div>
+<div class="drop" id="drop">
+<div class="pick"><button class="btn big" id="pick" type="button">Choose an Excel file</button><span class="muted">or drop it here</span>
+<input type="file" id="file" accept=".xlsx,.xls,.xlsm,.ods,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" class="sr"></div>
+<div class="gs"><span class="muted">or paste a Google Sheets link</span>
+<div class="gsrow"><input type="url" id="gs" placeholder="https://docs.google.com/spreadsheets/d/..." aria-label="Google Sheets link"><button class="btn ghost" id="gsgo" type="button">Load</button></div></div>
+<p class="note">Expected: one tab of shows (title, app, release date, views) and one tab of app revenue (app, revenue). Column names are matched loosely. A Google Sheet must be shared as "Anyone with the link can view".</p>
+<p class="note">No file at hand? <a href="#" id="sample">Load the assignment data</a>.</p>
+</div>
 <p class="note" id="status" role="status"></p>
 </section>
 
@@ -141,13 +154,26 @@ const fmtM=v=>v>=1e6?(v/1e6).toFixed(2)+'M':Math.round(v).toLocaleString('en-US'
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function toDate(v){if(v instanceof Date)return v;if(typeof v==='number')return new Date(Math.round((v-25569)*864e5));if(!v)return null;const d=new Date(v);return isNaN(d)?null:d;}
 function findCol(h,keys){return h.findIndex(x=>keys.some(k=>String(x||'').toLowerCase().includes(k)));}
-function parseWB(wb){let shows=null,rev=null,notes='';
- wb.SheetNames.forEach(n=>{const a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true});if(!a.length)return;const h=a[0];
-  const iv=findCol(h,['view']),ir=findCol(h,['release','date']),it=findCol(h,['title','show','name']),ia=findCol(h,['app','platform']),irev=findCol(h,['revenue']);
-  if(iv>=0&&ir>=0&&!shows)shows=a.slice(1).filter(r=>r[it]).map(r=>[r[it],r[ia],toDate(r[ir]),r[iv]]);
-  else if(irev>=0&&!rev){rev=[];a.slice(1).forEach(r=>{if(r[0]&&typeof r[irev]==='number')rev.push([r[findCol(h,['app','platform','name'])]??r[0],r[irev]]);else if(r[0])notes+=' '+r[0];});}});
- if(!shows||!rev)throw new Error('Could not find a shows sheet (with views and release date) and a revenue sheet.');
+function parseTables(tables){let shows=null,rev=null,notes='';
+ tables.forEach(a=>{if(!a.length)return;const h=a[0];
+  const iv=findCol(h,['view']),ir=findCol(h,['release','date']),it=findCol(h,['title','show']),ia=findCol(h,['app','platform']),irev=findCol(h,['revenue']);
+  const tt=it>=0?it:0;
+  if(iv>=0&&ir>=0&&!shows)shows=a.slice(1).filter(r=>r[tt]).map(r=>[r[tt],r[ia],toDate(r[ir]),num(r[iv])]);
+  else if(irev>=0&&!rev){rev=[];const ian=findCol(h,['app','platform','name']);a.slice(1).forEach(r=>{const v=num(r[irev]);if(r[0]&&v!=null)rev.push([r[ian>=0?ian:0],v]);else if(r[0])notes+=' '+r[0];});}});
+ if(!shows||!rev)throw new Error('I could not find both tabs: one with views and release dates, and one with revenue.');
  return {shows,rev,notes};}
+function num(v){if(typeof v==='number')return v;if(v==null||v==='')return null;const n=Number(String(v).replace(/[$,\s]/g,''));return isNaN(n)?null:n;}
+function parseWB(wb){return parseTables(wb.SheetNames.map(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true})));}
+function gviz(id,sheet){const u=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&headers=1`+(sheet?`&sheet=${encodeURIComponent(sheet)}`:'');
+ return fetch(u).then(r=>r.text()).then(t=>{const j=JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1));if(j.status==='error')throw new Error('tab');
+  const cv=c=>{if(!c||c.v==null)return null;const v=c.v;if(typeof v==='string'){const m=v.match(/^Date\((\d+),(\d+),(\d+)/);if(m)return new Date(Date.UTC(+m[1],+m[2],+m[3]));}return v;};
+  const rows=j.table.rows.map(r=>r.c.map(cv));const labels=j.table.cols.map(c=>c.label);
+  return labels.some(Boolean)?[labels,...rows]:rows;});}
+async function loadGS(){const url=$('gs').value.trim();const m=url.match(/\/d\/([a-zA-Z0-9_-]+)/);if(!m){$('status').textContent='That does not look like a Google Sheets link.';return;}
+ $('status').textContent='Loading the Google Sheet...';const tabs=[];
+ for(const n of ['Show_Performance','Shows','Show Performance','Data','App_Revenue','Revenue','App Revenue','Sheet1','Sheet2',null]){try{tabs.push(await gviz(m[1],n));}catch(e){}}
+ if(!tabs.length){$('status').textContent='Could not open the sheet. Check that it is shared as "Anyone with the link can view".';return;}
+ try{load(parseTables(tabs),'the Google Sheet');}catch(e){$('status').textContent=e.message+' Tip: name the tabs Show_Performance and App_Revenue.';}}
 function guessRef(notes){const m=notes.match(/(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})/i);
  return m?new Date(m[1]+' '+m[2]+' '+m[3]+' UTC'):new Date();}
 function prank(arr,x){const n=arr.length;if(n<2)return 1;const less=arr.filter(v=>v<x).length;return Math.round(less/(n-1)*1000)/1000;}
@@ -216,9 +242,11 @@ function labelTables(){document.querySelectorAll('.tbl table').forEach(t=>{const
   if(h[0]==='#'&&tr.children[0]&&!tr.children[0].textContent.startsWith('#'))tr.children[0].textContent='#'+tr.children[0].textContent;});});}
 function load(raw,label){RAW=raw;$('ref').value=guessRef(raw.notes).toISOString().slice(0,10);$('controls').hidden=false;$('out').hidden=false;
  $('status').textContent=`Loaded ${label}: ${raw.shows.length} rows, ${raw.rev.length} platforms. Reference date read from the file: ${$('ref').value}.`;render();}
-$('sample').onclick=()=>load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');
-function readFile(f){const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});load(parseWB(wb),f.name);}catch(err){$('status').textContent='Could not read this file: '+err.message;}};rd.readAsArrayBuffer(f);}
-$('file').onchange=e=>e.target.files[0]&&readFile(e.target.files[0]);
+$('sample').onclick=(e)=>{e.preventDefault();load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');};
+function readFile(f){if(typeof XLSX==='undefined'){$('status').textContent='The Excel reader did not load. Check your connection and refresh.';return;}$('status').textContent='Reading '+f.name+'...';const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});load(parseWB(wb),f.name);}catch(err){$('status').textContent='Could not read this file: '+err.message;}};rd.readAsArrayBuffer(f);}
+$('pick').onclick=()=>$('file').click();
+$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(/\.gsheet$/i.test(f.name)){$('status').textContent='That is a Google Sheets shortcut, not the file itself. Paste the sheet link instead.';return;}readFile(f);e.target.value='';};
+$('gsgo').onclick=loadGS;$('gs').addEventListener('keydown',e=>{if(e.key==='Enter')loadGS();});
 const dz=$('drop');['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on')}));
 dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&readFile(e.dataTransfer.files[0]));
 ['ref','w','mdv','mrpm','topn','mdays'].forEach(id=>$(id).addEventListener('input',render));

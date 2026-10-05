@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Licensing Recommender</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+:root{--page:#0C0C26;--pink:#F70367;--violet:#7A0FFF;--cyan:#32DCFF;--fg:#FFFFFF;--fg2:rgba(255,255,255,.72);--fg3:rgba(255,255,255,.5);--line:rgba(255,255,255,.15);--surf:rgba(255,255,255,.05);--surf2:rgba(255,255,255,.09);--font:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--fg);font-family:var(--font);font-size:16px;line-height:26px}
+.header{position:sticky;top:0;z-index:5;height:64px;display:flex;align-items:center;gap:12px;padding-inline:max(16px,4vw);background:rgba(10,10,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:12px}
+.mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pink),var(--violet))}
+.header b{font-weight:600}
+.header span{color:var(--fg2);font-size:14px;margin-inline-start:auto}
+main{max-width:1100px;margin:0 auto;padding:48px max(16px,4vw) 80px;display:grid;gap:40px}
+h1{font-size:36px;line-height:1.15;font-weight:700;margin:0;text-wrap:balance}
+h2{font-size:24px;line-height:32px;font-weight:700;margin:0}
+h3{font-size:16px;line-height:24px;font-weight:600;margin:0}
+.lead{color:var(--fg2);max-width:70ch;margin:12px 0 0}
+section{display:grid;gap:16px}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:16px;min-width:0}
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:6px;align-content:start}
+.card .k{font-size:28px;font-weight:700;line-height:1.1}
+.card p{margin:0;color:var(--fg2);font-size:14px;line-height:22px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:20px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--fg3);font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+td.n{text-align:right;white-space:nowrap}
+td.app{white-space:nowrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:6px;vertical-align:baseline}
+.decision{border-radius:16px;padding:24px;background:linear-gradient(135deg,rgba(247,3,103,.18),rgba(122,15,255,.18));border:1px solid rgba(247,3,103,.5);display:grid;gap:8px}
+.decision .k{font-size:32px;font-weight:700}
+ul{margin:0;padding-inline-start:20px;display:grid;gap:8px}
+li::marker{color:var(--pink)}
+.note{color:var(--fg3);font-size:13px;line-height:20px;margin:0}
+a{color:var(--cyan)}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--fg2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sq{display:inline-block;width:10px;height:10px;border:2px solid var(--fg2)}
+.ci{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--fg2)}
+#tip{position:fixed;pointer-events:none;background:#0A0A0A;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;line-height:18px;display:none;z-index:10;max-width:260px}
+.bars{display:grid;gap:14px}
+.bar{display:grid;grid-template-columns:120px 1fr 80px;align-items:center;gap:12px;font-size:14px}
+.bar .t{height:14px;border-radius:0 4px 4px 0;background:var(--surf2)}
+.bar .f{height:14px;border-radius:0 4px 4px 0}
+.two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-top:20px}
+@media(max-width:600px){h1{font-size:28px}.bar{grid-template-columns:90px 1fr 64px}}
+
+.pnav{margin-inline-start:auto;display:flex;gap:4px}
+.pnav a{padding:6px 12px;border-radius:999px;color:var(--fg2);font-size:14px;line-height:20px;text-decoration:none;white-space:nowrap}
+.pnav a:hover{color:var(--fg)}
+.pnav a[aria-current]{background:var(--surf2);color:var(--fg);font-weight:600}
+.next{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;border-radius:16px;border:1px solid rgba(247,3,103,.5);background:linear-gradient(135deg,rgba(247,3,103,.14),rgba(122,15,255,.14));color:var(--fg);text-decoration:none}
+.next b{font-size:18px}.next span{color:var(--fg2);font-size:14px}
+@media(max-width:600px){.header>a b{display:none}.pnav a{padding:6px 10px}}
+.hint{display:inline-flex;align-items:center;gap:8px;justify-self:start;padding:8px 14px;border-radius:999px;background:rgba(50,220,255,.12);border:1px solid rgba(50,220,255,.45);color:var(--cyan);font-size:14px;line-height:20px}
+.hint svg{width:16px;height:16px;flex:none;display:inline-block}
+.pt{cursor:pointer}.pt:hover>:first-child{transform-box:fill-box;transform-origin:center;transform:scale(1.6)}
+
+.swipe{display:none}
+@media(max-width:700px){
+#chart{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-inline:-8px;padding-bottom:6px}
+#chart svg{min-width:760px}
+.swipe{display:block}
+.tbl{overflow:visible}
+.tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+.tbl thead{display:none}
+.tbl tr{border-bottom:1px solid var(--line);padding:12px 0}
+.tbl td{border:0;padding:2px 0;text-align:left!important;white-space:normal!important}
+.tbl td[data-label]::before{content:attr(data-label) ": ";color:var(--fg3);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.tbl td.lead-cell{font-weight:600;font-size:15px}
+.tbl td.lead-cell::before{content:none}
+.tbl td.num{display:inline;width:auto;margin-inline-end:8px}
+}
+
+.drop{border:2px dashed var(--line);border-radius:16px;padding:28px;display:grid;gap:12px;justify-items:start;transition:.15s}
+.drop.on{border-color:var(--pink);background:rgba(247,3,103,.06)}
+.btn{font:inherit;font-weight:600;font-size:14px;padding:10px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg);display:inline-block;padding:6px 14px;margin-inline-start:6px}
+.ctl{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.ctl label{display:grid;min-width:0;gap:6px;font-size:13px;color:var(--fg2)}
+.ctl input[type=number],.ctl input[type=date]{width:100%;min-width:0;box-sizing:border-box;font:inherit;color:var(--fg);background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color-scheme:dark}
+.ctl input[type=range]{accent-color:var(--pink)}
+.ctl output{color:var(--fg);font-weight:600}
+details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
+#checks li{color:var(--fg2)}
+#out:not([hidden]){display:grid}
+</style></head><body>
+<header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html">Part 3</a><a href="tool.html" aria-current="page">Tool</a></nav></header>
+<main>
+<div><div class="eyebrow">The tool</div><h1>Licensing recommender</h1>
+<p class="lead">Upload a raw performance file and get the same analysis as Part 3 in seconds: data checks, daily views, platform RPM, a weighted score, a top list, shows to avoid and a chart. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
+
+<section class="panel">
+<div class="drop" id="drop"><div><b>Drop an Excel file here</b> or <label class="btn ghost">choose a file<input type="file" id="file" accept=".xlsx,.xls,.csv" hidden></label></div>
+<p class="note">Expected: a shows sheet (title, app, release date, views) and a revenue sheet (app, revenue). Column names are matched loosely.</p>
+<button class="btn" id="sample">Or try it with the assignment data</button></div>
+<p class="note" id="status" role="status"></p>
+</section>
+
+<section class="panel" id="controls" hidden>
+<h2>Settings</h2>
+<div class="ctl">
+<label>Reference date<input type="date" id="ref"></label>
+<label>Weight of daily views <output id="wv">70%</output><input type="range" id="w" min="0" max="100" step="5" value="70"></label>
+<label>Minimum daily views<input type="number" id="mdv" value="1000000" step="100000" min="0"></label>
+<label>Minimum platform RPM ($)<input type="number" id="mrpm" value="90" step="5" min="0"></label>
+<label>How many to license<input type="number" id="topn" value="10" min="1" max="50"></label>
+<label>"Too little data" under (days)<input type="number" id="mdays" value="60" min="1"></label>
+</div>
+<p class="note">Platform RPM weight is the rest (100% minus the daily views weight). Everything recalculates as you change a setting.</p>
+</section>
+
+<div id="out" hidden style="gap:40px">
+<section><h2>Data check</h2><div class="cards" id="kpis"></div><ul id="checks"></ul></section>
+<section><h2 id="toph">Top 10 to license</h2><div class="tbl"><table id="top"></table></div><p class="note" id="topnote"></p></section>
+<section><h2>Shows to avoid</h2><div class="tbl"><table id="avoid"></table></div></section>
+<section class="panel"><h2>Every show: daily views vs. platform RPM</h2>
+<div class="hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" fill="currentColor"/></svg>Hover over any dot to see the show (tap on mobile).</div>
+<div class="legend" id="legend"></div><div id="chart"></div>
+<p class="note">The dashed box is the target zone set above.</p></section>
+<section><h2>Full ranking</h2><details><summary>Show all shows with their score</summary><div class="tbl"><table id="all"></table></div></details>
+<p><button class="btn ghost" id="csv">Download the ranking (CSV)</button></p></section>
+</div>
+<a class="next" href="index.html"><span>That's everything</span><b>Back to the overview →</b></a>
+</main>
+<div id="tip" role="tooltip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const SAMPLE={"shows": [["Dust Road", "VeloCity", "2023-10-14", 165300000], ["Neon Gospel", "Pulse", "2023-10-24", 468500000], ["Nightingale", "EchoTV", "2023-11-03", 600000000], ["The Pale Horse", "Prism+", "2023-11-30", 307800000], ["Copper Sky", "VeloCity", "2024-01-08", 178200000], ["Hollow Bone", "NovaPlay", "2024-01-13", 437800000], ["Grave Light", "Prism+", "2024-01-29", 552500000], ["The Watchmaker", "Prism+", "2024-01-29", 333600000], ["Urban Legend", "Pulse", "2024-01-30", 371400000], ["The Cartel", "StreamHive", "2024-02-11", 497300000], ["Paper Lions (CHINESE)", "EchoTV", "2024-02-20", 560000000], ["The Carrier", "Zenith", "2024-03-04", 282500000], ["Salt Meridian", "Aura", "2024-03-12", 87100000], ["Empire of Dust", "Zenith", "2024-03-21", 308700000], ["Night Shift", "VeloCity", "2024-04-02", 177000000], ["Rebel Heart", "Pulse", "2024-04-16", 310600000], ["Cold Harbour", "NovaPlay", "2024-04-25", 462700000], ["Terminal Blue", "StreamHive", "2024-05-09", 523600000], ["Ash Harbour (CHINESE)", "StreamHive", "2024-05-14", 505000000], ["The Undertaker", "NovaPlay", "2024-05-21", 461000000], ["The Rainmaker", "EchoTV", "2024-05-23", 423400000], ["Amber Room", "StreamHive", "2024-05-28", 390000000], ["The Long Room", "Prism+", "2024-06-18", 344000000], ["The Understudy", "StreamHive", "2024-07-01", 589100000], ["The Undertow", "VeloCity", "2024-07-19", 202200000], ["The Confessor", "Zenith", "2024-07-24", 282000000], ["High Voltage", "Pulse", "2024-08-03", 247000000], ["Rust Belt", "EchoTV", "2024-08-05", 458400000], ["Hollow Crown (CHINESE)", "NovaPlay", "2024-08-06", 489000000], ["Velvet Shadows", "NovaPlay", "2024-08-10", 114500000], ["Velvet Shadows", "NovaPlay", "2024-08-10", 114500000], ["Field Notes", "EchoTV", "2024-08-12", 359100000], ["Foxglove", "Prism+", "2024-08-26", 403600000], ["Paper Kites", "Aura", "2024-09-05", 103600000], ["Iron Sky", "StreamHive", "2024-09-23", 548700000], ["Owl Season", "EchoTV", "2024-10-05", 374000000], ["The Quiet Man", "NovaPlay", "2024-10-07", 431900000], ["Steel Rain", "VeloCity", "2024-10-26", 205700000], ["Concrete Angels", "Pulse", "2024-11-12", 193000000], ["The Long Winter (CHINESE)", "Prism+", "2024-11-19", 460000000], ["Nine Lives", "EchoTV", "2024-12-09", 393400000], ["Zero Hour", "VeloCity", "2025-01-15", 255900000], ["The Quiet Hours", "Aura", "2025-01-22", 49300000], ["Threadbare", "EchoTV", "2025-02-03", 306300000], ["Moth Hour", "Zenith", "2025-02-15", 258600000], ["Riot Season", "Pulse", "2025-02-25", 150300000], ["Golden Thread", "NovaPlay", "2025-03-18", 195600000], ["Cinder Lane", "Zenith", "2025-03-24", 136000000], ["Cold Start", "VeloCity", "2025-04-09", 250500000], ["The Cartography of War", "Zenith", "2025-04-14", 212800000], ["Havoc Street", "StreamHive", "2025-04-26", 329900000], ["Mystic River", "Aura", "2025-04-30", 105600000], ["The Ledger", "NovaPlay", "2025-05-04", 266400000], ["Red Meridian", "Zenith", "2025-05-25", 239000000], ["The Archivist", "EchoTV", "2025-05-26", 329100000], ["Black Tide", "Pulse", "2025-06-07", 108800000], ["Saltwater", "StreamHive", "2025-06-30", 175300000], ["Golden Age", "Prism+", "2025-07-20", 523300000], ["Atlas Rising", "VeloCity", "2025-07-23", 251400000], ["Autumn Debt (CHINESE)", "Prism+", "2025-08-02", 392600000], ["Bitter Orange", "NovaPlay", "2025-08-07", 321900000], ["Low Tide", "Aura", "2025-08-14", 46800000], ["Kingdom Come", "Zenith", "2025-09-08", 141400000], ["Wild Fire", "Pulse", "2025-09-18", 76600000], ["Grey Market", "VeloCity", "2025-10-11", 232100000], ["Thistle & Thorn", "Zenith", "2025-10-22", 118600000], ["Driftwood", "NovaPlay", "2025-10-25", 274200000], ["Neon Empire", "StreamHive", "2025-10-28", 470100000], ["Winter Garden", "Aura", "2025-11-03", 52100000], ["Second Sun", "NovaPlay", "2025-11-14", 250100000], ["Thousand Lanterns (CHINESE)", "Zenith", "2025-11-14", 286700000], ["Ember Line", "EchoTV", "2025-11-30", 153400000], ["Vellum", "Prism+", "2025-12-02", 223900000], ["Ghost Frequency", "Pulse", "2025-12-29", 50200000], ["Pale Fire", "Prism+", "2026-01-04", 193000000], ["Omega Fall", "VeloCity", "2026-01-06", 256700000], ["Glasshouse", "Aura", "2026-01-19", 22900000], ["The Last Algorithm", "EchoTV", "2026-01-19", 411100000], ["Brass Lantern", "StreamHive", "2026-01-27", 191100000], ["Waterline", "StreamHive", "2026-02-10", 167500000], ["The Ninth Wave", "StreamHive", "2026-02-11", 453600000], ["Amber Protocol", "Prism+", "2026-02-11", null], ["Salt & Smoke", "EchoTV", "2026-02-20", 179400000], ["Ironclad", "Zenith", "2026-02-26", 104500000], ["Ash Harbour", "EchoTV", "2026-03-02", 32600000], ["The Tinderbox", "NovaPlay", "2026-03-05", 122800000], ["Small Mercies", "Aura", "2026-03-08", 25600000], ["Half Light", "Pulse", "2026-03-11", 31600000], ["Sable Court", "NovaPlay", "2026-03-13", 160500000], ["Static Bloom", "VeloCity", "2026-03-17", 213000000], ["The Ninth Concubine (CHINESE)", "EchoTV", "2026-03-25", 268000000], ["Harborlight", "NovaPlay", "2026-04-02", 217500000], ["Paper Lions", "Zenith", "2026-04-09", 19900000], ["Crimson Vow (CHINESE)", "EchoTV", "2026-04-28", 203000000], ["Velocity Blue", "VeloCity", "2026-05-04", 203700000], ["The Gilded Cage", "StreamHive", "2026-05-06", 221800000], ["Last Lantern (CHINESE)", "Prism+", "2026-05-06", 171600000], ["Snowblind", "Prism+", "2026-05-11", 65900000], ["Silent Echo", "Prism+", "2026-05-12", 199100000], ["Hollow Crown", "Prism+", "2026-05-18", 25200000], ["Cyber Heart (CHINESE)", "StreamHive", "2026-05-20", 204100000], ["Dead Air", "Pulse", "2026-05-23", 17900000], ["The Cartographer", "Aura", "2026-05-27", 19800000], ["Silver Fork", "StreamHive", "2026-05-27", 35000000], ["The Long Winter", "StreamHive", "2026-06-03", 18000000], ["Jade Verdict (CHINESE)", "Prism+", "2026-06-08", 188100000], ["Iron Hearts (CHINESE)", "EchoTV", "2026-06-11", 240000000], ["Eternal Circle", "Aura", "2026-06-18", 351600000], ["Wolf Season", "VeloCity", "2026-06-20", 151200000], ["Crimson Vow", "EchoTV", "2026-06-25", 36900000], ["Slow Burn", "EchoTV", "2026-06-30", 87800000], ["Glass Kingdom (CHINESE)", "EchoTV", "2026-06-30", 111600000], ["Blue Hour", "Aura", "2026-07-02", 9100000], ["Silent Harbor (CHINESE)", "Zenith", "2026-07-02", 247500000], ["Crown Fire", "Pulse", "2026-07-11", 369600000], ["Cyber Heart", "Prism+", "2026-07-14", 28300000], ["Marble Hall", "Prism+", "2026-07-18", 64300000], ["Last Lantern", "NovaPlay", "2026-07-21", 17500000], ["Final Horizon", "VeloCity", "2026-07-29", 101700000], ["Iron Hearts", "EchoTV", "2026-07-30", 22300000], ["Glass Kingdom", "StreamHive", "2026-08-05", 10100000], ["Nightjar", "Aura", "2026-08-09", 5700000], ["Silent Harbor", "NovaPlay", "2026-08-20", 18900000], ["Kill Switch", "VeloCity", "2026-08-22", 66000000], ["Northern Gate", "EchoTV", "2026-10-09", 96400000]], "revenue": [["StreamHive", 704000000], ["NovaPlay", 784000000], ["EchoTV", 367000000], ["VeloCity", 160000000], ["Prism+", 439000000], ["Pulse", 34000000], ["Zenith", 132000000], ["Aura", 18000000], ["Revenue is cumulative for the platform's entire lifetime to date, across its whole catalogue.", null], ["Views in Show_Performance are cumulative since release. Both figures are as of 15 September 2026.", null]]};
+const KNOWN={"StreamHive":"#3987e5","EchoTV":"#d95926","Zenith":"#199e70","Aura":"#c98500","Prism+":"#d55181","NovaPlay":"#008300","VeloCity":"#9085e9","Pulse":"#e66767"};
+const PAL=["#3987e5","#d95926","#199e70","#c98500","#d55181","#008300","#9085e9","#e66767","#5fb3b3","#b07cd8"];
+let RAW=null,LAST=null;
+const $=id=>document.getElementById(id);
+const fmtM=v=>v>=1e6?(v/1e6).toFixed(2)+'M':Math.round(v).toLocaleString('en-US');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toDate(v){if(v instanceof Date)return v;if(typeof v==='number')return new Date(Math.round((v-25569)*864e5));if(!v)return null;const d=new Date(v);return isNaN(d)?null:d;}
+function findCol(h,keys){return h.findIndex(x=>keys.some(k=>String(x||'').toLowerCase().includes(k)));}
+function parseWB(wb){let shows=null,rev=null,notes='';
+ wb.SheetNames.forEach(n=>{const a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true});if(!a.length)return;const h=a[0];
+  const iv=findCol(h,['view']),ir=findCol(h,['release','date']),it=findCol(h,['title','show','name']),ia=findCol(h,['app','platform']),irev=findCol(h,['revenue']);
+  if(iv>=0&&ir>=0&&!shows)shows=a.slice(1).filter(r=>r[it]).map(r=>[r[it],r[ia],toDate(r[ir]),r[iv]]);
+  else if(irev>=0&&!rev){rev=[];a.slice(1).forEach(r=>{if(r[0]&&typeof r[irev]==='number')rev.push([r[findCol(h,['app','platform','name'])]??r[0],r[irev]]);else if(r[0])notes+=' '+r[0];});}});
+ if(!shows||!rev)throw new Error('Could not find a shows sheet (with views and release date) and a revenue sheet.');
+ return {shows,rev,notes};}
+function guessRef(notes){const m=notes.match(/(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})/i);
+ return m?new Date(m[1]+' '+m[2]+' '+m[3]+' UTC'):new Date();}
+function prank(arr,x){const n=arr.length;if(n<2)return 1;const less=arr.filter(v=>v<x).length;return Math.round(less/(n-1)*1000)/1000;}
+function analyze(raw,o){
+ const checks=[],seen=new Map(),rows=[];
+ raw.shows.forEach(([t,a,d,v])=>{const key=[t,a,d&&d.toISOString().slice(0,10),v].join('|');
+  if(seen.has(key)){checks.push(`<b>${esc(t)}</b> appears twice (same app, date and views), so I counted it once.`);return;}seen.set(key,1);
+  const r={t:String(t).trim(),a:String(a||'').trim(),d,v:typeof v==='number'?v:null,ok:true};
+  if(r.v===null){r.ok=false;checks.push(`<b>${esc(r.t)}</b> has no views; left out instead of guessing a number.`);}
+  else if(!d){r.ok=false;checks.push(`<b>${esc(r.t)}</b> has no release date; left out.`);}
+  else if(d>o.ref){r.ok=false;checks.push(`<b>${esc(r.t)}</b> has a release date (${d.toISOString().slice(0,10)}) after the reference date but already shows ${fmtM(r.v)} views; left out until the date is confirmed.`);}
+  rows.push(r);});
+ const revMap=new Map(raw.rev.map(([a,v])=>[String(a).trim(),v]));
+ const ok=rows.filter(r=>r.ok);
+ ok.forEach(r=>{r.days=Math.max(1,Math.round((o.ref-r.d)/864e5));r.dv=r.v/r.days;r.cn=/\(chinese\)/i.test(r.t);r.base=r.t.replace(/\s*\(chinese\)\s*/i,'').trim();});
+ const apps=[...new Set(ok.map(r=>r.a))];const rpm={};
+ apps.forEach(a=>{const vs=ok.filter(r=>r.a===a).reduce((s,r)=>s+r.v,0);if(revMap.has(a)&&vs)rpm[a]=revMap.get(a)/vs*1000;else checks.push(`<b>${esc(a)}</b> has no revenue in the file; its shows get no RPM.`);});
+ const dvs=ok.map(r=>r.dv),rpms=Object.values(rpm);
+ ok.forEach(r=>{r.rpm=rpm[r.a]??null;r.pdv=prank(dvs,r.dv);r.prpm=r.rpm==null?0:prank(rpms,r.rpm);r.score=o.w*r.pdv+(1-o.w)*r.prpm;});
+ ok.sort((a,b)=>b.score-a.score);ok.forEach((r,i)=>r.rank=i+1);
+ const byBase=new Map();ok.forEach(r=>{if(!byBase.has(r.base))byBase.set(r.base,[]);byBase.get(r.base).push(r);});
+ ok.forEach(r=>{const g=byBase.get(r.base);const orig=g.find(x=>x.cn&&x!==r);if(!r.cn&&orig){r.remakeOf=orig;}});
+ const median=[...dvs].sort((a,b)=>a-b)[Math.floor(dvs.length/2)];
+ const zone=r=>r.dv>=o.mdv&&r.rpm!=null&&r.rpm>=o.mrpm;
+ const top=ok.filter(r=>zone(r)&&!r.remakeOf).slice(0,o.n);
+ const avoid=[];
+ ok.filter(r=>r.remakeOf).forEach(r=>{const x=r.remakeOf.dv/r.dv;if(x>1.5)avoid.push({r,trap:'Remake',why:`License the original instead: it gets ${x.toFixed(1)}x more daily views, and the remake would compete for the same audience.`+(r.rpm>=o.mrpm?' Its platform pays well, but that is the platform, not the show.':'')});});
+ const byTotal=[...ok].sort((a,b)=>b.v-a.v).slice(0,5);
+ byTotal.filter(r=>r.dv<median*1.5&&r.days>365).forEach(r=>avoid.push({r,trap:'Old totals',why:`${fmtM(r.v)} total views, but over ${r.days} days that is only ${fmtM(r.dv)} a day. Older shows are also more likely to be on other platforms already.`}));
+ ok.filter(r=>r.days<o.mdays&&r.dv>=o.mdv&&!zone(r)).forEach(r=>avoid.push({r,trap:'Too little data',why:`${fmtM(r.dv)} a day, but only ${r.days} days on the market${r.rpm!=null&&r.rpm<o.mrpm?', on a low-RPM platform':''}. Wait for more data.`}));
+ const outside=ok.slice(0,10).filter(r=>!top.includes(r)&&!r.remakeOf);
+ return {rows,ok,rpm,checks,top,avoid,median,zone,outside,removed:rows.length-ok.length+(raw.shows.length-rows.length)};}
+function colors(apps){const m={};let j=0;apps.forEach(a=>{m[a]=KNOWN[a]||PAL[(j++)%PAL.length];});return m;}
+function render(){if(!RAW)return;
+ const o={ref:new Date($('ref').value+'T00:00:00Z'),w:+$('w').value/100,mdv:+$('mdv').value,mrpm:+$('mrpm').value,n:+$('topn').value,mdays:+$('mdays').value};
+ $('wv').textContent=$('w').value+'%';
+ const R=analyze(RAW,o);LAST=R;const COL=colors(Object.keys(R.rpm).sort((a,b)=>R.rpm[b]-R.rpm[a]));
+ const dot=a=>`<i class="dot" style="background:${COL[a]||'#888'}"></i>${esc(a)}`;
+ $('kpis').innerHTML=[[RAW.shows.length,'Rows in the file'],[R.ok.length,'Shows ranked'],[Object.keys(R.rpm).length,'Platforms'],[fmtM(R.median),'Median daily views']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
+ $('checks').innerHTML=R.checks.length?R.checks.map(c=>`<li>${c}</li>`).join(''):'<li>No problems found.</li>';
+ $('toph').textContent=`Top ${o.n} to license`;
+ $('top').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th></tr></thead><tbody>'+R.top.map((r,i)=>`<tr><td class="n">${i+1}</td><td>${esc(r.t)}${r.days<o.mdays?' *':''}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">$${r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td></tr>`).join('')+'</tbody>';
+ const short=R.top.length<o.n?` Only ${R.top.length} shows meet both conditions; loosen the settings to see more.`:'';
+ $('topnote').innerHTML=`Qualify: at least ${fmtM(o.mdv)} daily views and a platform RPM of $${o.mrpm} or more, remakes excluded. Then ordered by the score (daily views ${Math.round(o.w*100)}%, platform RPM ${100-Math.round(o.w*100)}%).`+(R.top.some(r=>r.days<o.mdays)?` * Under ${o.mdays} days on the market: the riskiest picks.`:'')+short+(R.outside.length?` High scorers left out by the conditions: ${R.outside.map(r=>esc(r.t)+' ('+esc(r.a)+')').join(', ')}.`:'');
+ $('avoid').innerHTML='<thead><tr><th>Show</th><th>App</th><th>The trap</th><th>Why</th></tr></thead><tbody>'+(R.avoid.length?R.avoid.map(x=>`<tr><td>${esc(x.r.t)}</td><td class="app">${dot(x.r.a)}</td><td>${x.trap}</td><td>${x.why}</td></tr>`).join(''):'<tr><td colspan="4">Nothing flagged.</td></tr>')+'</tbody>';
+ $('all').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th></tr></thead><tbody>'+R.ok.map(r=>`<tr><td class="n">${r.rank}</td><td>${esc(r.t)}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">${r.rpm==null?'–':'$'+r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td></tr>`).join('')+'</tbody>';
+ $('legend').innerHTML=Object.keys(COL).map(a=>`<span><i class="dot" style="background:${COL[a]}"></i>${esc(a)}</span>`).join('')+'<span><i class="sq"></i>Chinese original</span>';
+ chart(R,o,COL);labelTables();}
+function chart(R,o,COL){const W=1000,H=520,L=70,Rm=20,T=20,B=50;const pts=R.ok.filter(r=>r.rpm!=null);
+ const xm=Math.ceil(Math.max(...pts.map(r=>r.dv),o.mdv)/1e6)*1e6,ym=Math.ceil(Math.max(...pts.map(r=>r.rpm),o.mrpm)/50)*50;
+ const X=v=>L+v/xm*(W-L-Rm),Y=v=>H-B-v/ym*(H-T-B);
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily views against platform RPM">`;
+ for(let v=0;v<=ym;v+=50)s+=`<line x1="${L}" x2="${W-Rm}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.08)"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="rgba(255,255,255,.5)">$${v}</text>`;
+ for(let v=0;v<=xm;v+=1e6)s+=`<text x="${X(v)}" y="${H-B+20}" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.5)">${v/1e6}M</text>`;
+ s+=`<text x="${(L+W)/2}" y="${H-8}" text-anchor="middle" font-size="13" fill="rgba(255,255,255,.72)">Daily views</text>`;
+ s+=`<rect x="${X(o.mdv)}" y="${Y(ym)}" width="${X(xm)-X(o.mdv)}" height="${Y(o.mrpm)-Y(ym)}" fill="rgba(247,3,103,.08)" stroke="rgba(255,255,255,.55)" stroke-dasharray="6 5"/>`;
+ pts.forEach((p,i)=>{const x=X(p.dv),y=Y(p.rpm),c=COL[p.a];const m=p.cn?`<rect x="${x-5}" y="${y-5}" width="10" height="10" rx="1" fill="${c}" stroke="#0C0C26" stroke-width="2"/>`:`<circle cx="${x}" cy="${y}" r="5.5" fill="${c}" stroke="#0C0C26" stroke-width="2"/>`;
+  s+=`<g class="pt" data-i="${i}">${m}<circle cx="${x}" cy="${y}" r="12" fill="transparent"/></g>`;});
+ s+='</svg>';const el=$('chart');el.innerHTML=s;const tip=$('tip');
+ el.querySelectorAll('.pt').forEach(g=>{const show=e=>{const p=pts[g.dataset.i];tip.innerHTML=`<b>${esc(p.t)}</b><br><span style="color:rgba(255,255,255,.72)">${esc(p.a)} · ${fmtM(p.dv)} a day · RPM $${p.rpm.toFixed(0)} · ${p.days} days · score ${(p.score*100).toFixed(1)}</span>`;
+  tip.style.display='block';tip.style.left=Math.min(e.clientX+14,innerWidth-270)+'px';tip.style.top=(e.clientY+14)+'px';};
+  g.addEventListener('pointermove',show);g.addEventListener('pointerdown',show);g.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')tip.style.display='none'});});}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.pt'))$('tip').style.display='none'});
+function labelTables(){document.querySelectorAll('.tbl table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());
+ t.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(h[0]==='#'&&i<2)td.classList.add('num','lead-cell');else if(i===0&&h[0]==='Show')td.classList.add('lead-cell');else if(h[i])td.setAttribute('data-label',h[i]);});
+  if(h[0]==='#'&&tr.children[0]&&!tr.children[0].textContent.startsWith('#'))tr.children[0].textContent='#'+tr.children[0].textContent;});});}
+function load(raw,label){RAW=raw;$('ref').value=guessRef(raw.notes).toISOString().slice(0,10);$('controls').hidden=false;$('out').hidden=false;
+ $('status').textContent=`Loaded ${label}: ${raw.shows.length} rows, ${raw.rev.length} platforms. Reference date read from the file: ${$('ref').value}.`;render();}
+$('sample').onclick=()=>load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');
+function readFile(f){const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});load(parseWB(wb),f.name);}catch(err){$('status').textContent='Could not read this file: '+err.message;}};rd.readAsArrayBuffer(f);}
+$('file').onchange=e=>e.target.files[0]&&readFile(e.target.files[0]);
+const dz=$('drop');['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on')}));
+dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&readFile(e.dataTransfer.files[0]));
+['ref','w','mdv','mrpm','topn','mdays'].forEach(id=>$(id).addEventListener('input',render));
+$('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','In top list','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),LAST.top.includes(r)?'Yes':'',r.remakeOf?r.remakeOf.t:'']));
+ const csv=lines.map(l=>l.map(v=>/[",]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':v).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='licensing_ranking.csv';a.click();};
+</script>
+</body></html>

@@ -71,6 +71,22 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .frame{aspect-ratio:9/16;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000}
 .frame iframe{width:100%;height:100%;border:0;display:block}
 @media(max-width:700px){.vid{grid-template-columns:1fr}.frame{max-width:340px;width:100%;margin:0 auto}}
+
+.swipe{display:none}
+@media(max-width:700px){
+#chart{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-inline:-8px;padding-bottom:6px}
+#chart svg{min-width:760px}
+.swipe{display:block}
+.tbl{overflow:visible}
+.tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+.tbl thead{display:none}
+.tbl tr{border-bottom:1px solid var(--line);padding:12px 0}
+.tbl td{border:0;padding:2px 0;text-align:left!important;white-space:normal!important}
+.tbl td[data-label]::before{content:attr(data-label) ": ";color:var(--fg3);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.tbl td.lead-cell{font-weight:600;font-size:15px}
+.tbl td.lead-cell::before{content:none}
+.tbl td.num{display:inline;width:auto;margin-inline-end:8px}
+}
 </style></head><body>
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html" aria-current="page">Part 2</a><a href="part3.html">Part 3</a></nav></header>
 <main>
@@ -188,4 +204,10 @@ tl('tl2',494,[[0,11,'Open'],[11,221,'Act 1: how'],[221,327,'Act 2: her world'],[
  [[0,11,'P','The pregnancy'],[31,56,'P','The drug and the chase'],[121,191,'B','The love scene in the car'],[327,386,'P','The nightclub'],[386,442,'B','Her mother and Mr. Holtz'],[442,494,'P','The broom, then the ending']]);
 })();
 </script>
-</body></html>
+<script>
+document.querySelectorAll('.tbl table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());
+ t.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{
+  if(i===0&&(h[0]===''||h[0]==='#'||h[0]==='Act'||h[0]==='Show'||h[0]==='Signal'))td.classList.add('lead-cell');
+  else if(h[i])td.setAttribute('data-label',h[i]);});
+  if(h[0]==='#'&&tr.children[1]){tr.children[0].textContent='#'+tr.children[0].textContent.replace('#','');tr.children[0].classList.add('num');tr.children[1].classList.add('num');tr.children[1].classList.add('lead-cell');tr.children[1].removeAttribute('data-label');}});});
+</script></body></html>

@@ -114,7 +114,7 @@ tr.medline td div{font-size:12px;color:#ff6fa6;padding:6px 12px;font-weight:600}
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html">Part 3</a><a href="tool.html" aria-current="page">Tool</a></nav></header>
 <main>
 <div><div class="eyebrow">The tool</div><h1>Licensing recommender</h1>
-<p class="lead">Upload a performance file and get a ranked buy list in seconds: every show scored, a line between buy and don't buy, a ceiling for what to offer, the shows to avoid and the data problems to fix. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
+<p class="lead">Upload a performance file and get a ranked buy list in seconds: every show scored, a line between buy and don't buy, a suggested offer once you enter your average price, the shows to avoid and the data problems to fix. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
 
 <section class="panel">
 <div class="drop" id="drop">
@@ -154,14 +154,11 @@ tr.medline td div{font-size:12px;color:#ff6fa6;padding:6px 12px;font-weight:600}
 <label>"Too little data" under (days)<input type="number" id="mdays" value="60" min="1"></label>
 </div>
 <p class="note">Platform RPM weight is the rest (100% minus the daily views weight).</p>
-<h3>How much to offer (assumptions)</h3>
+<h3>How much to offer</h3>
 <div class="ctl">
-<label>Share of its daily views we expect on our app (%)<input type="number" id="cap" value="20" min="0" max="100" step="5"></label>
-<label>Our revenue per 1,000 views ($, empty = its platform RPM)<input type="number" id="ourrpm" placeholder="platform RPM" min="0" step="5"></label>
-<label>License term (months)<input type="number" id="term" value="12" min="1" max="60"></label>
-<label>Share of expected revenue we would pay (%)<input type="number" id="pay" value="30" min="0" max="100" step="5"></label>
+<label>What we pay for an average series ($, optional)<input type="number" id="avgp" placeholder="e.g. 50000" min="0" step="1000"></label>
 </div>
-<p class="note">Everything above recalculates as you change a setting. The offer is a ceiling for the negotiation, not a price: real license terms, exclusivity and our own conversion data would replace these assumptions.</p>
+<p class="note">Everything above recalculates as you change a setting. With an average price filled in, each show gets a suggested offer: the average price, scaled by how much money per day the show brings compared with a typical show (daily views × platform RPM).</p>
 </section>
 </div>
 <a class="next" href="index.html"><span>That's everything</span><b>Back to the overview →</b></a>
@@ -233,26 +230,28 @@ function analyze(raw,o){
 function colors(apps){const m={};let j=0;apps.forEach(a=>{m[a]=KNOWN[a]||PAL[(j++)%PAL.length];});return m;}
 function render(){if(!RAW)return;
  const o={ref:new Date($('ref').value+'T00:00:00Z'),w:+$('w').value/100,mdv:+$('mdv').value,mrpm:+$('mrpm').value,n:+$('topn').value,mdays:+$('mdays').value,
-  cap:+$('cap').value/100,our:$('ourrpm').value===''?null:+$('ourrpm').value,term:+$('term').value,pay:+$('pay').value/100};
+  avgp:$('avgp').value===''?null:+$('avgp').value};
  $('wv').textContent=$('w').value+'%';
  const R=analyze(RAW,o);LAST=R;const COL=colors(Object.keys(R.rpm).sort((a,b)=>R.rpm[b]-R.rpm[a]));
  const dot=a=>`<i class="dot" style="background:${COL[a]||'#888'}"></i>${esc(a)}`;
  const scores=R.ok.map(r=>r.score).sort((a,b)=>a-b);const medS=scores[Math.floor(scores.length/2)];
- const money=v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+Math.round(v/1e3)+'K';
+ const money=v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+Math.round(v/1e3)+'K':'$'+Math.round(v);
  R.ok.forEach(r=>{
   if(R.top.includes(r)){r.status='lic';r.reason=r.days<o.mdays?`only ${r.days} days on the market`:'';}
   else if(r.remakeOf){r.status='pas';r.reason='remake: license the original';}
   else if(r.score>=medS){r.status='con';const why=[];if(r.dv<o.mdv)why.push('under '+fmtM(o.mdv)+' a day');if(r.rpm==null||r.rpm<o.mrpm)why.push('platform RPM under $'+o.mrpm);if(r.days<o.mdays)why.push(`only ${r.days} days`);if(!why.length)why.push('outside the top '+o.n);r.reason=why.join(', ');}
   else{r.status='pas';r.reason='';}
-  const rpm=o.our??r.rpm??0;r.offer=r.dv*o.cap*rpm/1000*o.term*30.4*o.pay;});
+  r.val=r.dv*(r.rpm??0);});
+ const vals=R.ok.map(r=>r.val).sort((a,b)=>a-b),medV=vals[Math.floor(vals.length/2)]||1;
+ R.ok.forEach(r=>{r.offer=o.avgp==null?null:o.avgp*r.val/medV;});
  const nL=R.ok.filter(r=>r.status==='lic').length,nC=R.ok.filter(r=>r.status==='con').length;
- $('sum').innerHTML=[[nL,'to license'],[nC,'to consider'],[(medS*100).toFixed(1),'median score'],[money(R.top.reduce((s,r)=>s+r.offer,0)),'max offer for the top list']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
+ $('sum').innerHTML=[[nL,'to license'],[nC,'to consider'],[(medS*100).toFixed(1),'median score'],[fmtM(R.median),'median daily views']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
  const B={lic:'<i class="badge lic">License</i>',con:'<i class="badge con">Consider</i>',pas:'<i class="badge pas">Pass</i>'};
  let rows='',lined=false;
  R.ok.forEach(r=>{if(!lined&&r.score<medS){rows+=`<tr class="medline"><td colspan="9"><div>Median score ${(medS*100).toFixed(1)}: below this line, don't buy</div></td></tr>`;lined=true;}
-  rows+=`<tr class="${r.status==='pas'?'pass':''}"><td class="n">${r.rank}</td><td>${esc(r.t)}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">${r.rpm==null?'–':'$'+r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td><td>${B[r.status]}<span class="muted" style="font-size:12px">${r.reason}</span></td><td class="n">${r.status==='pas'?'–':money(r.offer)}</td></tr>`;});
- $('all').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th><th>Verdict</th><th>Max offer*</th></tr></thead><tbody>'+rows+'</tbody>';
- $('offernote').innerHTML=`Score: daily views ${Math.round(o.w*100)}%, platform RPM ${100-Math.round(o.w*100)}%. "License" = the top ${o.n} that reach ${fmtM(o.mdv)} daily views on a platform with RPM of $${o.mrpm} or more, remakes excluded.<br>*Max offer = daily views × ${Math.round(o.cap*100)}% we expect to capture × ${o.our==null?'its platform RPM':'$'+o.our+' per 1,000 views'} × ${o.term} months × ${Math.round(o.pay*100)}% of that revenue. A ceiling for the negotiation, based on assumptions you can change in Settings.`;
+  rows+=`<tr class="${r.status==='pas'?'pass':''}"><td class="n">${r.rank}</td><td>${esc(r.t)}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">${r.rpm==null?'–':'$'+r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td><td>${B[r.status]}<span class="muted" style="font-size:12px">${r.reason}</span></td><td class="n">${r.status==='pas'||r.offer==null?'–':money(r.offer)}</td></tr>`;});
+ $('all').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th><th>Verdict</th><th>Offer*</th></tr></thead><tbody>'+rows+'</tbody>';
+ $('offernote').innerHTML=`Score: daily views ${Math.round(o.w*100)}%, platform RPM ${100-Math.round(o.w*100)}%. "License" = the top ${o.n} that reach ${fmtM(o.mdv)} daily views on a platform with RPM of $${o.mrpm} or more, remakes excluded.<br>*Offer: ${o.avgp==null?'add what we pay for an average series in Settings, and each show gets a suggested offer.':'our average price ('+money(o.avgp)+'), scaled by the show\'s money per day (daily views × platform RPM) against the median show. A starting point for the negotiation.'}`;
  $('kpis').innerHTML=[[RAW.shows.length,'Rows in the file'],[R.ok.length,'Shows ranked'],[Object.keys(R.rpm).length,'Platforms'],[fmtM(R.median),'Median daily views']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
  $('checks').innerHTML=R.checks.length?R.checks.map(c=>`<li>${c}</li>`).join(''):'<li>No problems found.</li>';
  $('avoid').innerHTML='<thead><tr><th>Show</th><th>App</th><th>The trap</th><th>Why</th></tr></thead><tbody>'+(R.avoid.length?R.avoid.map(x=>`<tr><td>${esc(x.r.t)}</td><td class="app">${dot(x.r.a)}</td><td>${x.trap}</td><td>${x.why}</td></tr>`).join(''):'<tr><td colspan="4">Nothing flagged.</td></tr>')+'</tbody>';
@@ -285,8 +284,8 @@ $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(/\.gsheet$/i.te
 $('gsgo').onclick=loadGS;$('gs').addEventListener('keydown',e=>{if(e.key==='Enter')loadGS();});
 const dz=$('drop');['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on')}));
 dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&readFile(e.dataTransfer.files[0]));
-['ref','w','mdv','mrpm','topn','mdays','cap','ourrpm','term','pay'].forEach(id=>$(id).addEventListener('input',render));
-$('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','Verdict','Reason','Max offer ($)','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),{lic:'License',con:'Consider',pas:'Pass'}[r.status],r.reason,r.status==='pas'?'':Math.round(r.offer),r.remakeOf?r.remakeOf.t:'']));
+['ref','w','mdv','mrpm','topn','mdays','avgp'].forEach(id=>$(id).addEventListener('input',render));
+$('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','Verdict','Reason','Suggested offer ($)','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),{lic:'License',con:'Consider',pas:'Pass'}[r.status],r.reason,r.status==='pas'||r.offer==null?'':Math.round(r.offer),r.remakeOf?r.remakeOf.t:'']));
  const csv=lines.map(l=>l.map(v=>/[",]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':v).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='licensing_ranking.csv';a.click();};
 </script>
 </body></html>

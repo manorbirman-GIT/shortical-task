@@ -88,6 +88,12 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .tbl td.num{display:inline;width:auto;margin-inline-end:8px}
 }
 .pnav a.navbonus{display:inline-block;color:var(--fg2);border:1px solid rgba(247,3,103,.55);padding:5px 12px}@media(max-width:600px){.nbl{display:none}}.pnav a.navbonus:hover,.pnav a.navbonus[aria-current]{color:var(--fg);border-color:var(--pink)}
+details.more>summary{display:inline-flex;align-items:center;gap:8px;cursor:pointer;list-style:none;color:var(--fg);font-weight:600;font-size:16px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:"See it +";font-size:13px;font-weight:500;color:var(--cyan);border:1px solid rgba(50,220,255,.35);border-radius:999px;padding:3px 10px}
+details.more[open]>summary::after{content:"Hide −"}
+details.more[open]>summary{margin-bottom:12px}
+details.more{display:grid;gap:12px}
 </style></head><body>
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html" aria-current="page">Part 2</a><a href="part3.html">Part 3</a><a href="tool.html" class="navbonus">Bonus<span class="nbl">: Greenlight</span></a></nav></header>
 <main>
@@ -103,7 +109,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 <div class="panel"><div class="eyebrow">The hook · 0:00-0:34</div><h3>What happens</h3><p style="margin:0;color:var(--fg2)">A hospital bed. 'You're pregnant' (0:04), 'with triplets' (0:05), 'he told me he was sterile' (0:13), and she doesn't know who the father is.</p></div>
 <div class="panel"><div class="eyebrow">Why it works</div><h3>It opens on the result</h3><p style="margin:0;color:var(--fg2)">Three shocks in 15 seconds set up the premise and plant three questions: how, who, and how will she manage?</p></div>
 </div>
-<div class="panel"><h3>Key turning points</h3>
+<div class="panel"><details class="more"><summary>Key turning points: the 10 big twists</summary>
 <div class="tbl"><table><thead><tr><th>Time</th><th>What happens</th><th>What it adds</th></tr></thead><tbody>
 <tr><td class="n">0:04</td><td>She is pregnant.</td><td>The first shock; the whole story starts here.</td></tr>
 <tr><td class="n">0:05</td><td>With triplets.</td><td>Raises the stakes: three babies, no money.</td></tr>
@@ -115,19 +121,19 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 <tr><td class="n">9:07</td><td>She names the father: Marcus Sinclair.</td><td>The villains learn who he is; she didn't even know.</td></tr>
 <tr><td class="n">11:30</td><td>Marcus sets off to save her, but she calls and he doesn't answer.</td><td>A race against time begins.</td></tr>
 <tr><td class="n">13:50</td><td>A second before the blow, Marcus and his men run toward her. The ad ends.</td><td>The rescue is shown, not delivered.</td></tr>
-</tbody></table></div></div>
-<div class="panel"><h3>The narrative</h3>
+</tbody></table></div></details></div>
+<div class="panel"><details class="more"><summary>The narrative: three acts and the peak</summary>
 <div class="tbl"><table><thead><tr><th>Act</th><th>Time</th><th>What it does</th></tr></thead><tbody>
 <tr><td><b>Act 1:</b> How did this happen?</td><td class="n">0:40-2:55</td><td>Leaves the night unclear. Marcus looks dangerous, then turns out to be a victim too, so he is interesting before he is good.</td></tr>
 <tr><td><b>Act 2:</b> His world. Rich, but not happy</td><td class="n">3:10-6:05</td><td>Marcus has everything except love, and a poor, suffering cleaning girl is the one who reaches him. He sends away the rich neighbors' daughter, so he isn't after status, and his family stands behind him. One flaw keeps the romance tense: he thinks she got pregnant on purpose to trap him.</td></tr>
 <tr><td><b>Act 3:</b> Her world, an escalating Via Dolorosa</td><td class="n">6:15-13:35</td><td>About seven minutes of violence and humiliation, each beat worse than the last, cut against his warm home. Her family cares about money, not about her or the babies; his parents want the triplets, no matter who the mother is.</td></tr>
 <tr><td><b>The peak</b></td><td class="n">13:35-13:50</td><td>The heavy tool, the slow motion, the laugh, and Marcus running in. Cut.</td></tr>
-</tbody></table></div></div>
-<div class="cards">
+</tbody></table></div></details></div>
+<div class="panel"><details class="more"><summary>Story loops: seeds, growth, a new question</summary><div class="cards">
 <div class="card"><div class="eyebrow">Story loops · 1</div><div class="k" style="font-size:22px">Seeds</div><p>The first 30 seconds plant how, who, and how will she manage.</p></div>
 <div class="card"><div class="eyebrow">Story loops · 2</div><div class="k" style="font-size:22px">Growth</div><p>The ad answers each one: the flashback shows how, the reveal shows who, her family shows what she faces. Smaller loops along the way: is Marcus good, will his family accept her, will he believe her, will she lose the babies?</p></div>
 <div class="card"><div class="eyebrow">Story loops · 3</div><div class="k" style="font-size:22px">A new question</div><p>By the end every opening question is answered, but a bigger one is open: will he save her in time? That is the reason to install.</p></div>
-</div>
+</div></details></div>
 <div class="panel"><h3>Why I think this creative won</h3><ul>
 <li><b>It starts at the result.</b> The first 15 seconds set up the premise, and the viewer stays to find out how.</li>
 <li><b>First unclear, then clear good and bad.</b> Marcus is interesting because we don't know him; then the family becomes the clear villain.</li>
@@ -152,7 +158,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 <div class="panel"><h3>The ad at a glance</h3>
 <div class="tl" id="tl2"></div>
 <div class="legend"><span><i class="sw" style="background:var(--pink)"></i>Peak</span><span><i class="sw" style="background:var(--cyan)"></i>Breather</span></div><h3>Peaks and breathers</h3><div class="tbl"><table><thead><tr><th>Ad time</th><th>Rhythm</th><th>Scene</th></tr></thead><tbody><tr><td class="n">0:00-0:11</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The pregnancy</td></tr><tr><td class="n">0:31-0:56</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The drug and the chase</td></tr><tr><td class="n">2:01-3:11</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The love scene in the car</td></tr><tr><td class="n">5:27-6:26</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The nightclub</td></tr><tr><td class="n">6:26-7:22</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The confrontation at home with her mother and Mr. Holtz</td></tr><tr><td class="n">7:22-7:42</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The broom, then the ending</td></tr></tbody></table></div></div>
-<div class="panel"><h3>The ad, beat by beat</h3>
+<div class="panel"><details class="more"><summary>The ad, beat by beat</summary>
 <p class="note">Source timecodes refer to the official ReelShort videos: <a href="https://www.youtube.com/watch?v=DA9d2QEhyyM">V1 = EP1-9</a>, <a href="https://www.youtube.com/watch?v=kknUuMvFg0k">V2 = EP9-20</a>.</p>
 <div class="tbl"><table><thead><tr><th>Ad time</th><th>Source</th><th>Beat</th></tr></thead><tbody>
 <tr><td class="n">0:00-0:11</td><td class="app">V1 4:07-4:18</td><td><b>Opening, the result.</b> Molly finds out she is pregnant: 'My mom is going to kill me.' Three questions in 11 seconds: how, who, and how will she survive her family?</td></tr>
@@ -162,21 +168,21 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 <tr><td class="n">6:26-7:22</td><td class="app">V2 8:01-8:56</td><td><b>Mr. Holtz.</b> Her mother sets her up with a 90-year-old, then finds out she is pregnant and calls her a slut.</td></tr>
 <tr><td class="n">7:22-7:42</td><td class="app">V2 10:38-10:58</td><td><b>The broom.</b> Her mother attacks her to force an abortion. Cut before Graham arrives.</td></tr>
 <tr><td class="n">7:42-8:14</td><td class="app">V2 14:14-14:46</td><td><b>Closing, the cliffhanger.</b> Hospital. The baby is okay. Graham walks in. She thinks he'll see her as trapping him, and asks the doctor treating her, out loud: 'Dr. Simpson, can you arrange an abortion for me?' One shot of Graham's face. Cut.</td></tr>
-</tbody></table></div></div>
-<div class="panel"><h3>Story loops</h3><p style="margin:0;color:var(--fg2)">The opening seeds how, who, and how will she survive. The ad answers how and who, shows what she is up against, and ends on a bigger question. The flaw planted in Act 1 (he thinks she's a gold digger) drives her final decision, so the cliffhanger grows out of the story. It is also not a misleading ad: every scene comes from episodes 1-20, and it promises only what those episodes deliver.</p></div>
+</tbody></table></div></details></div>
+<div class="panel"><details class="more"><summary>Story loops</summary><p style="margin:0;color:var(--fg2)">The opening seeds how, who, and how will she survive. The ad answers how and who, shows what she is up against, and ends on a bigger question. The flaw planted in Act 1 (he thinks she's a gold digger) drives her final decision, so the cliffhanger grows out of the story. It is also not a misleading ad: every scene comes from episodes 1-20, and it promises only what those episodes deliver.</p></details></div>
 <div class="two">
-<div class="panel"><h3>How it applies what worked in Triplets</h3><ul>
+<div class="panel"><details class="more"><summary>How it applies what worked in Triplets</summary><ul>
 <li><b>Start at the result:</b> the pregnancy reveal opens the ad.</li>
 <li><b>First unclear, then clear good and bad:</b> Graham seems to judge her; her mother becomes the clear villain.</li>
 <li><b>Contrast:</b> his world of success against her home of cleaning, violence and money.</li>
 <li><b>Escalating suffering:</b> an old man, 'slut', a broom, a hospital bed.</li>
 <li><b>She doesn't deserve it:</b> she would rather lose everything than trap him.</li>
-<li><b>Show the protector once, hold back the ending:</b> he saves her at the nightclub; the ad stops before the next rescue.</li></ul></div>
-<div class="panel"><h3>What I kept short or left out</h3><ul>
+<li><b>Show the protector once, hold back the ending:</b> he saves her at the nightclub; the ad stops before the next rescue.</li></ul></details></div>
+<div class="panel"><details class="more"><summary>What I kept short or left out</summary><ul>
 <li><b>The childhood rescue coincidence:</b> one 10-second flashback (1:31-1:41), left as a question. One test viewer said that is where she would stop watching; a second found it intriguing. So I kept it short.</li>
 <li><b>The fiancée:</b> she only arrives around episode 20.</li>
 <li><b>The second rescue:</b> the broom scene is cut before Graham arrives, so the wish for a rescue keeps building.</li>
-<li><b>The hospital storyline:</b> the staff treat her badly at work; left out to keep one clear storyline, and because it only develops after episode 30.</li></ul></div>
+<li><b>The hospital storyline:</b> the staff treat her badly at work; left out to keep one clear storyline, and because it only develops after episode 30.</li></ul></details></div>
 </div>
 <div class="panel"><h3>Two endings: an A/B test</h3>
 <p class="note">Both versions are the same up to the broom attack (ad 0:00-7:42).</p>
@@ -187,7 +193,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 </tbody></table></div>
 <ul><li><b>What I measure:</b> conversion, how many reach the paywall per 1,000 ad impressions. I also watch how many open the app and start watching.</li>
 <li><b>Decision rule:</b> run both endings to the same audience; the one with the better conversion wins.</li></ul></div>
-<div class="panel"><h3>Length</h3><p style="margin:0;color:var(--fg2)">8:14 or 7:42, well under the 14-minute Triplets ad, which felt too long to my test group. I watched about 15 more episodes in the ReelShort app and chose not to add more storylines: my test group said the ad should stay focused. In the real world I would let the data decide (where viewers drop off, which peaks hold them); without per-episode or per-second data, I relied on my test group.</p></div>
+<div class="panel"><details class="more"><summary>Length</summary><p style="margin:0;color:var(--fg2)">8:14 or 7:42, well under the 14-minute Triplets ad, which felt too long to my test group. I watched about 15 more episodes in the ReelShort app and chose not to add more storylines: my test group said the ad should stay focused. In the real world I would let the data decide (where viewers drop off, which peaks hold them); without per-episode or per-second data, I relied on my test group.</p></details></div>
 </section>
 <a class="next" href="part3.html"><span>Next</span><b>Part 3: Licensing →</b></a>
 </main>

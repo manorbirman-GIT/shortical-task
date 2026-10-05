@@ -189,4 +189,5 @@ document.querySelectorAll('section h2').forEach(h=>{if(h.textContent.trim()!=='T
  t.querySelectorAll('thead th').forEach((th,ci)=>{th.style.cursor='pointer';th.title='Sort';th.addEventListener('click',()=>{const tb=t.tBodies[0];const rows=[...tb.rows];const asc=th.dataset.dir!=='asc';
   const val=r=>{const x=r.cells[ci].textContent.replace(/[#$,*]/g,'').trim();const n=parseFloat(x)*(/M$/.test(x)?1e6:1);return isNaN(n)?x.toLowerCase():n;};
   rows.sort((a,b)=>{const A=val(a),B=val(b);return (A>B?1:A<B?-1:0)*(asc?1:-1);});rows.forEach(r=>tb.appendChild(r));t.querySelectorAll('th').forEach(x=>{x.dataset.dir='';x.textContent=x.textContent.replace(/ [↑↓]$/,'')});th.dataset.dir=asc?'asc':'desc';th.textContent+=asc?' ↑':' ↓';});});});
-</script></body></html>
+</script><script data-goatcounter="https://shortical-task.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body></html>

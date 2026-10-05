@@ -310,4 +310,5 @@ dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&readFile(e.dataTransfer.f
 $('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','Verdict','Reason','Suggested offer ($)','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),{lic:'License',con:'Consider',pas:'Pass'}[r.status],r.reason,r.status==='pas'||r.offer==null?'':Math.round(r.offer),r.remakeOf?r.remakeOf.t:'']));
  const csv=lines.map(l=>l.map(v=>/[",]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':v).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='licensing_ranking.csv';a.click();};
 </script>
+<script data-goatcounter="https://shortical-task.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body></html>

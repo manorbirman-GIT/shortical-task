@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shortical Series Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: Shortical "Browse" shell — sticky dark header, breadcrumb, title, metric pills (genre-pill style), one chart panel, poster-style series cards, assumptions. Single dark brand theme by design. */
+:root{
+  --page:#0C0C26; --head:#0A0A0A; --pink:#F70367; --pink2:#FF005E; --violet:#7A0FFF; --cyan:#32DCFF;
+  --fg:#FFFFFF; --fg2:rgba(255,255,255,.68); --fg3:rgba(255,255,255,.45);
+  --line:rgba(255,255,255,.15); --surf:rgba(255,255,255,.05); --surf2:rgba(255,255,255,.09);
+  --font:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--fg);font-family:var(--font);font-size:16px;line-height:24px}
+.header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;height:64px;display:flex;align-items:center;gap:12px;padding-inline:max(16px,4vw);background:rgba(10,10,10,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pink),var(--violet))}
+.header b{font-weight:600;font-size:16px}
+.header span{color:var(--fg2);font-size:14px;margin-inline-start:auto}
+main{max-width:1640px;margin:0 auto;padding-inline:max(16px,4vw);padding-block:48px;display:grid;gap:32px}
+.crumb{font-size:14px;color:var(--fg3);display:flex;gap:8px;flex-wrap:wrap}
+.crumb a{color:var(--fg3);text-decoration:none;transition:color .2s}
+.crumb a:hover{color:var(--fg)}
+h1{font-size:36px;line-height:1.15;font-weight:700;margin:8px 0 0;text-wrap:balance}
+.intro{color:var(--fg2);max-width:70ch;margin:8px 0 0}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font:500 12px/16px var(--font);padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--fg2);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.pill:hover{border-color:var(--pink);color:var(--fg)}
+.pill:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.pill[aria-selected="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+.rows{display:grid;gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:grid;gap:10px;padding:16px 20px}
+.row.human{border-top:1px dashed var(--line);background:rgba(122,15,255,.08)}
+.rowlab{font-size:11px;line-height:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3)}
+.human .rowlab{color:var(--cyan)}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:16px;min-width:0}
+.panel h2{font-size:20px;line-height:28px;font-weight:700;margin:0}
+.take{color:var(--fg);font-weight:500;margin:0;max-width:75ch}
+.note{color:var(--fg3);font-size:13px;line-height:20px;margin:0;max-width:85ch}
+.chart{overflow-x:auto}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--fg3);font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+td.wrap{white-space:normal;min-width:180px}
+.rail-title{font-size:20px;font-weight:700;margin:0}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:768px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1280px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.card{display:grid;gap:8px;min-width:0}
+.poster{aspect-ratio:3/4;max-width:100%;border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--line)}
+.poster .bg{position:absolute;inset:0;transition:transform .3s}
+.card:hover .poster .bg{transform:scale(1.05)}
+.poster .big{position:absolute;left:12px;bottom:12px;right:12px}
+.poster .num{font-size:30px;font-weight:700;line-height:1}
+.poster .lab{font-size:11px;color:var(--fg2);text-transform:uppercase;letter-spacing:.06em}
+.poster .tag{position:absolute;top:10px;left:10px;font:500 11px/16px var(--font);padding:2px 8px;border-radius:999px;background:rgba(10,10,10,.6);border:1px solid var(--line)}
+.card h3{font-size:14px;line-height:20px;font-weight:500;margin:0}
+.card p{font-size:12px;line-height:18px;color:var(--fg2);margin:0}
+.pbcharts{max-width:640px}
+.pbc{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.pbc h3{margin:0 0 6px;font-size:15px;font-weight:600}
+.pbtext{display:grid;gap:10px;max-width:80ch}
+.pbtext p{margin:0;color:var(--fg2);font-size:15px;line-height:23px}
+.pbtext b{color:var(--fg)}
+.grp{display:grid;gap:0}
+.grow{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.grow:last-child{border-bottom:0}
+@media(max-width:560px){.grow{grid-template-columns:1fr;gap:8px}}
+.glab{font-weight:600;font-size:15px;color:var(--fg)}
+.gitems{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.gchip{display:inline-flex;gap:8px;align-items:baseline;padding:6px 14px;border-radius:999px;background:linear-gradient(90deg,rgba(247,3,103,.32),rgba(122,15,255,.32));border:1px solid rgba(255,255,255,.12)}
+.gchip b{font-weight:500;font-size:13px}
+.gchip i{font-style:normal;font-size:12px;color:var(--cyan);font-weight:600}
+.tagrows{display:grid;gap:14px}
+.tagrow{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+@media(max-width:520px){.tagrow{grid-template-columns:1fr;gap:6px}}
+.tname{font-weight:500;font-size:14px;text-align:right}
+@media(max-width:520px){.tname{text-align:left}}
+.tags{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.tag{font:500 12px/16px var(--font);padding:4px 12px;border-radius:999px;background:linear-gradient(90deg,rgba(247,3,103,.35),rgba(122,15,255,.35));color:#fff}
+.tag.off{background:transparent;border:1px solid var(--pink);color:var(--fg)}
+.sums{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.sum{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:10px;min-width:0}
+.sum h3{margin:0;font-size:18px;line-height:24px;font-weight:700}
+.sum .promise{color:var(--pink2);font-weight:500;font-size:14px;margin:0}
+.sum p{margin:0;color:var(--fg2);font-size:15px;line-height:23px}
+.sum .take2{color:var(--fg)}
+.sum .take2 b{color:var(--cyan);font-weight:600}
+.sum .nums{display:flex;flex-wrap:wrap;gap:8px}
+.sum .nums span{font:500 12px/16px var(--font);padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--fg)}
+.profiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.prof{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:6px;font-size:14px;line-height:20px;min-width:0}
+.prof h3{margin:0 0 4px;font-size:16px;font-weight:600}
+.prof dt{color:var(--fg3);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.prof dd{margin:0 0 4px}
+.extra{display:grid;gap:14px;border-top:1px solid var(--line);padding-top:16px}
+.scale{margin:0;font-size:13px;color:var(--fg2)}
+.scale b,.extra .h{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3);margin-inline-end:8px}
+.extra .h{display:block;margin-bottom:6px}
+.miss{border:1px dashed rgba(50,220,255,.5);border-radius:12px;padding:12px 16px}
+.miss .h{color:var(--cyan)}
+ul.as{font-size:14px;line-height:20px;margin:0;padding-inline-start:20px;display:grid;gap:6px;color:var(--fg2);max-width:85ch}
+@media(max-width:767px){main{padding-block:32px}h1{font-size:24px}.header{height:56px}}
+@media(min-width:768px) and (max-width:1023px){h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.pnav{margin-inline-start:auto;display:flex;gap:4px}
+.pnav a{padding:6px 12px;border-radius:999px;color:var(--fg2);font-size:14px;line-height:20px;text-decoration:none;white-space:nowrap}
+.pnav a:hover{color:var(--fg)}
+.pnav a[aria-current]{background:var(--surf2);color:var(--fg);font-weight:600}
+.next{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;border-radius:16px;border:1px solid rgba(247,3,103,.5);background:linear-gradient(135deg,rgba(247,3,103,.14),rgba(122,15,255,.14));color:var(--fg);text-decoration:none}
+.next b{font-size:18px}.next span{color:var(--fg2);font-size:14px}
+@media(max-width:600px){.header>a b{display:none}.pnav a{padding:6px 10px}}
+</style>
+
+<header class="header"><a href="index.html" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html" aria-current="page">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html">Part 3</a></nav></header>
+<main>
+  <section>
+    <nav class="crumb" aria-label="Breadcrumb"><a href="#overview">Home assignment</a><span>/</span><a href="#overview">Part 1</a><span>/</span><span>Series map</span></nav>
+    <h1>What keeps viewers watching</h1>
+    <p class="intro">I tested several lenses on the six series and went deep on each. The one that explains the most is rhythm: how big twists and calmer scenes alternate, episode by episode. My test group's pull scores (how much they wanted the next episode, 1 to 4) pointed the same way.</p>
+    <p class="intro" style="margin-top:8px">Six series, measured episode by episode over the opening episodes of each (trailers excluded). Pick a lens to see how the series group.</p>
+  </section>
+
+  <div class="rows">
+    <div class="row"><span class="rowlab">Counted and measured</span><div class="pills" role="tablist" id="pills"></div></div>
+    <div class="row human"><span class="rowlab">Human judgment · my 1–4 scores</span><div class="pills" role="tablist" id="pills2"></div></div>
+  </div>
+  <section class="panel" id="panel" role="tabpanel"></section>
+
+  <section style="display:grid;gap:16px" aria-labelledby="sumh">
+    <h2 class="rail-title" id="sumh">The six series</h2>
+    <p class="intro" style="margin:0">The promise and the story first, then my take from the viewing.</p>
+    <div class="sums" id="sums"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="pbh">
+    <h2 id="pbh" class="rail-title">What works: peak and breather</h2>
+    <div class="pbcharts" id="pbcharts"></div>
+    <div class="pbtext">
+      <p><b>What it is.</b> Count the big turning points in each episode. A <b>peak</b> episode has 1.4 or more per minute; a <b>breather</b> has 0.8 or less. In my sample, the three series with the highest average pull have both: a peak shocks you, a breather lets you believe the characters and fear for them. These are working cutoffs that separated the episodes I measured, not a universal rule. In Triplets, the factory and family episodes slow down (0.8), then the bar episode hits: Daisy is drugged in a bar, and Marcus finds her in the factory and saves her.</p><p><b>How to read it.</b> Each dot is one series: across is its strongest episode, up is its calmest. Only the pink corner has both a peak and a breather.</p>
+      <p><b>Why I chose it.</b> Genre and the average twist rate didn't explain pull. Doctor Boss, Genie and Final Boss average about 0.8 big twists a minute, yet only Doctor Boss has a high pull score, together with Hockey Star and Triplets. What the three share is rhythm. Queen's Heart is the counterexample: the most big twists of the six (2.0 a minute), but a pull score of only 2.0. The pattern is visible across all six, but six series are a hypothesis, not proof. Prediction: in Shortical's own data, series with both a peak and a breather in their first five episodes should keep more viewers to the paywall than series with only one of the two.</p>
+      <p><b>A second check.</b> Scenes per minute, a completely separate measure, splits the series into the same three groups: 1.6–2.0 for the three highest-pull series, 1.3–1.4 for the two with no peak, 0.9 for Queen's Heart. Both fully AI series sit at the low end (Queen's Heart 0.9, Genie 1.4), even though in AI a new location costs almost nothing. That's an unused, cheap lever to test.</p>
+      <p><b>An outside viewer.</b> Another viewer later watched one episode of Doctor Boss and of Queen's Heart. She ranked Doctor Boss first (pull 4) and Queen's Heart lower (pull 2), and called its acting "very fake". The same pattern, from a fresh pair of eyes.</p>
+    </div>
+    <div class="pbtext">
+      <h3 style="margin:18px 0 6px">The three groups</h3>
+      <p><b>Peak and breather: Hockey Star, Doctor Boss, Triplets.</b> A shock episode, then a calmer one that builds the characters. The highest pull scores (2.8–3.0).</p>
+      <p><b>No peak: Final Boss, Genie.</b> Steady and slow: no episode above 1.2 big twists a minute. Pull 2.5 and 1.8.</p>
+      <p><b>No breather: Queen's Heart.</b> Every episode at 1.7 big twists a minute or more. Constant shocks, the lowest emotion score (1.0), pull 2.0.</p>
+      <p><b>What it means for Shortical:</b> plan a peak episode, then a breather; check the rhythm of the first episodes before licensing a series; and in AI productions, add locations, which cost little.</p>
+    </div>
+  </section>
+
+
+<a class="next" href="part2.html"><span>Next</span><b>Part 2: The ads →</b></a>
+</main>
+
+<script>
+const S=[
+ {id:"hockey",genres:"Romantic drama, marital betrayal, medical drama (accident, hospital). The trailer promises a revenge story.",sex:'No explicit sex',viol:'Physical: he pushes her, car accident, a bottle thrown at her',n:"How to Dump a Hockey Star",s:"Hockey Star",big:1.07,all:3.3,pull:2.8,emo:2.3,shot:2.3,music:1.2,fx:1.0,chars:3.5,vo:"4/4",voP:100,cliff:"4/4",cliffP:100,shotType:"Medium",cam:"Static (3 of 4), gentle push 1",prod:"Filmed",eps:"1–4",
+  hero:"Renee Carlson",open:"Strong, then victim",power:"Reversal over the series",villain:"Madeline (and Levi from ep 2)",saves:"She saves herself",promise:"The discarded wife rises and her husband regrets it."},
+ {id:"doctor",genres:"Thriller (the creepy doctor drugs and chases her), then romance and sex (the car), then family drama (an evil, Cinderella-style family)",sex:'Yes, an explicit sex scene in the car',viol:'Drugging, chase, threats to the baby (trailer)',n:"Doctor Boss is My Baby Daddy",s:"Doctor Boss",big:0.87,all:3.0,pull:3.0,emo:2.25,shot:2.9,music:1.4,fx:2.0,chars:3.5,vo:"3/4",voP:75,cliff:"4/4",cliffP:100,shotType:"Close-up",cam:"Static",prod:"Filmed",eps:"2–5",
+  hero:"Molly McGuire",open:"Weak",power:"He is stronger",villain:"Adoptive mother Deborah, the creepy doctor, the fiancée",saves:"The man",promise:"Cinderella with a secret baby and a rich protector."},
+ {id:"triplets",genres:"Medical reveal, workplace bullying with a comic-relief beat (the girls pitching themselves to Sinclair), family abuse drama, romance",sex:'A paid night, a light sex scene in the bar episode',viol:'The most explicit of the six: the father beats her, blood (trailer and ad)',n:"Carrying His Triplets, Becoming His Wifey",s:"Triplets",big:1.08,all:2.5,pull:3.0,emo:2.0,shot:1.9,music:2.0,fx:2.2,chars:4.7,vo:"1/3",voP:33,cliff:"3/3",cliffP:100,shotType:"Close-up",cam:"Static",prod:"Filmed",eps:"2–4",
+  hero:"Daisy Miller, 19, warehouse worker",open:"Weak",power:"He is stronger",villain:"Her father John and brother, her coworkers",saves:"The man",promise:"A millionaire will protect me and the babies from everyone who hurt me."},
+ {id:"finalboss",genres:"War flashback (action), contract-marriage romance, humiliation and revenge",sex:'No',viol:'War flashback with gunfire, a slap (trailer)',n:"Move Aside! I'm the Final Boss",s:"Final Boss",big:0.80,all:1.07,pull:2.5,emo:1.5,shot:3.3,music:1.6,fx:0.8,chars:3.0,vo:"2/2",voP:100,cliff:"2/2",cliffP:100,shotType:"Medium / close-up",cam:"Static",prod:"Filmed",eps:"1–2",
+  hero:"Kingsley Baldwin",open:"Weak",power:"Reversal over the series",villain:"Hannah and her rich friend",saves:"Hidden identity",promise:"The people who mocked me will find out I'm the king."},
+ {id:"genie",genres:"Fantasy, a period prologue (1966), corporate contract-marriage romance",sex:'No',viol:'No',n:"The Great and Powerful Genie",s:"Genie",big:0.84,all:1.1,pull:1.8,emo:1.8,shot:3.4,music:1.3,fx:1.3,chars:3.5,vo:"1/2",voP:50,cliff:"1/2",cliffP:50,shotType:"Medium",cam:"Static",prod:"Fully AI",eps:"1–2",
+  hero:"Steven (ep 1), Christine Parrish (from ep 2)",open:"Strong",power:"She is stronger",villain:"Suspected until ep 4: the wife, the father's granddaughter",saves:"Supernatural power",promise:"A magic protector hiding as a contract-marriage husband."},
+ {id:"queen",genres:"One genre throughout: dramatic relationship drama (betrayal, public humiliation, hidden-identity revenge), in one location",sex:'No',viol:'Humiliation: she has her hand stepped on',n:"Never Break a Queen's Heart",s:"Queen's Heart",big:1.99,all:2.8,pull:2.0,emo:1.0,shot:2.4,music:2.2,fx:4.2,chars:4.0,vo:"3/3",voP:100,cliff:"3/3",cliffP:100,shotType:"Medium",cam:"Static",prod:"Fully AI",eps:"2–4",
+  hero:"Chloe",open:"Weak",power:"Reversal over the series",villain:"Trevor (her husband) and Mia Bell",saves:"Hidden identity / inheritance",promise:"The people who humiliated me will find out who I really am."}
+];
+const TW="Big twist: a turn that changes the story's direction or the balance of power. Small twist: new information that doesn't change direction.";
+const SC="Pull and emotion are my own score per episode, 1 (low) to 4 (high). The series score is the average of its episodes, so it can fall between whole numbers.";
+const T=[
+ {k:"genre",type:"groups",groups:[["Hidden identity",[["hockey",""],["finalboss",""],["queen",""]]],["Secret pregnancy",[["hockey",""],["doctor",""],["triplets",""]]],["Protector",[["doctor",""],["triplets",""],["genie",""]]],["Contract marriage",[["finalboss",""],["genie",""],["queen",""]]]],l:"Genre",title:"Genre",scale:"Groups by story type · a series can sit in more than one",
+  take:"Four story types repeat across the six series. Most series combine two of them.",
+  as:["Sources: ReelShort and DramaWave official uploads (tags and synopses) and my viewing."]},
+ {k:"big",type:"groups",groups:[["0–1 per minute",[["doctor","0.9"],["genie","0.8"],["finalboss","0.8"]]],["1–2 per minute",[["hockey","1.1"],["triplets","1.1"],["queen","2.0"]]]],l:"Big twists / min",f:"big",dp:1,max:2.2,ticks:[0,0.5,1,1.5,2],title:"Big twists per minute",scale:"0–2.2 big twists per minute",
+  take:"Queen's Heart has twice the big twists of any other series, and the lowest emotion score.",
+  as:["Big twists per minute = total big twists ÷ total episode length in seconds × 60.",TW]},
+ {k:"all",type:"groups",groups:[["1–2 per minute",[["finalboss","1.1"],["genie","1.1"]]],["2–3 per minute",[["triplets","2.5"],["queen","2.8"]]],["3–4 per minute",[["hockey","3.3"],["doctor","3.0"]]]],l:"All twists / min",f:"all",dp:1,max:4,ticks:[0,1,2,3,4],title:"All twists per minute (big and small)",scale:"0–4 twists per minute",
+  take:"Hockey Star keeps something happening all the time, but most of it is small interpersonal turns.",
+  as:["All twists per minute = total twists (big and small) ÷ total episode length in seconds × 60.",TW,"Doctor Boss: averaged over episodes 2, 3 and 5."]},
+ {k:"shot",type:"groups",groups:[["1–2 seconds",[["triplets","1.9 s"]]],["2–3 seconds",[["hockey","2.3 s"],["queen","2.4 s"],["doctor","2.9 s"]]],["3–4 seconds",[["finalboss","3.3 s"],["genie","3.4 s"]]]],l:"Shot length",f:"shot",dp:1,max:4,ticks:[0,1,2,3,4],unit:" s",title:"Average shot length",scale:"0–4 seconds per shot · shorter means faster cutting",
+  take:"Triplets cuts fastest at 1.9 s, with the same big-twist rate as Hockey Star. Pace can come from editing, not from more plot.",
+  as:["Measured automatically: cuts detected in the video, after cropping the dark borders of the screen recording.","Average shot length = episode length ÷ (cuts + 1).","Trailers are not included. For Triplets, a 43-second clip whose screen recording had two pop-up windows (extra false cuts) was left out."]},
+ {k:"music",type:"groups",groups:[["Up to 1.5 per minute",[["hockey","1.2"],["genie","1.3"],["doctor","1.4"]]],["1.5 and up",[["finalboss","1.6"],["triplets","2.0"],["queen","2.2"]]]],l:"Music changes / min",f:"music",dp:1,max:4,ticks:[0,1,2,3,4],title:"Music changes per minute",scale:"0–4 changes per minute",
+  take:"Every series shifts its music 1.2–2.2 times a minute, so music changes alone don't separate high-pull series from low-pull ones. Flashbacks are marked by a music change (Genie, Final Boss).",
+  as:["Music change: a shift in the music's mood (for example romantic to dramatic). Counted by ear.","Per minute = total changes ÷ total length in seconds × 60, for the episodes counted."]},
+ {k:"fx",type:"groups",groups:[["Up to 1 per minute",[["finalboss","0.8"],["hockey","1.0"]]],["1–2 per minute",[["genie","1.3"]]],["2–3 per minute",[["doctor","2.0"],["triplets","2.2"]]],["4 and up",[["queen","4.2"]]]],l:"Sound effects / min",f:"fx",dp:1,max:5,ticks:[0,1,2,3,4,5],title:"Sound effects per minute",scale:"0–5 effects per minute",
+  take:"Queen's Heart uses about twice the sound effects of any other series (4.2 per minute), in line with its twist rate. Final Boss saves its effects for the end of the episode.",
+  as:["Sound effect: a marked sound that signals a turn, like the 'shatter' or a hit. Counted by ear.","Per minute = total effects ÷ total length in seconds × 60, for the episodes counted."]},
+ {k:"chars",type:"groups",groups:[["Up to 3",[["finalboss","3.0"]]],["3–4",[["hockey","3.5"],["doctor","3.5"],["genie","3.5"]]],["4–5",[["queen","4.0"],["triplets","4.7"]]]],l:"Characters",f:"chars",dp:1,max:5,ticks:[0,1,2,3,4,5],title:"Dominant characters per episode",scale:"0–5 characters per episode",
+  take:"Triplets keeps the most characters in play (4.7 per episode), which adds pace without adding twists.",
+  as:["Dominant character: someone who drives the scene, not a background extra. My count."]},
+ {k:"scenes",l:"Scenes / min",type:"groups",groups:[["Up to 1 per minute",[["queen","0.9"]]],["1–1.5 per minute",[["finalboss","1.3"],["genie","1.4"]]],["1.5–2 per minute",[["doctor","1.6"],["triplets","1.6"],["hockey","2.0"]]]],title:"Scenes per minute",scale:"Scenes per minute of episode",
+  take:"Queen's Heart barely changes place: under one scene a minute, almost all in one airport terminal. The three series with the highest pull move fastest between places and times.",
+  as:["Scene: continuous action in one place and time. A new location, a time jump or a flashback starts a new scene."]},
+ {k:"vo",type:"groups",groups:[["In every episode",[["hockey","4/4"],["finalboss","2/2"],["queen","3/3"]]],["In some episodes",[["doctor","3/4"],["genie","1/2"],["triplets","1/3"]]]],l:"Voiceover",f:"voP",dp:0,max:100,ticks:[0,25,50,75,100],unit:"%",lbl:"vo",title:"Episodes with voiceover",scale:"0–100% of episodes",
+  take:"Voiceover alone doesn't separate the series: Hockey Star, Final Boss and Queen's Heart all use it in every episode. What matters is its job. In Final Boss it explains the emotion; in Hockey Star and Doctor Boss it reveals what the characters feel at the peak.",
+  as:["An episode counts if any character narrates in voiceover.","Hockey Star's voiceover moves from the villain to the heroine exactly at the emotional peak (episode 3)."]},
+ {k:"prod",l:"Production",type:"groups",groups:[["Filmed with actors",[["hockey",""],["doctor",""],["triplets",""],["finalboss",""]]],["AI",[["genie",""],["queen",""]]]],title:"Production",scale:"Filmed / AI",
+  take:"Four of the six are filmed with real actors. Genie and Queen's Heart are AI.",
+  as:["Production is my estimate from watching. Genie's upload is labelled AI-generated."]},
+ {k:"data",l:"All data",type:"table",title:"All metrics",scale:"Mixed: see each tab",take:"The same numbers as the Excel comparison tab, recalculated from the episode log.",
+  as:[],
+  cols:[["Series","s"],["Episodes","eps"],["Production","prod"],["Big tw/min","big",1],["All tw/min","all",1],["Pull","pull",1],["Emotion","emo",1],["Shot (s)","shot",1],["Music ch. / min","music",1],["Sound fx / min","fx",1],["Characters","chars",1],["Voiceover","vo"]]},
+ {k:"overview",h:1,l:"Twists vs pull",type:"scatter",title:"Big twists per minute vs pull",scale:"X: 0–2.2 big twists per minute · Y: pull 1–4",
+  take:"The average alone doesn't explain pull: Doctor Boss, Genie and Final Boss all sit at 0.8–0.9 big twists per minute. What separates them is rhythm. The high-pull series have at least one peak episode (1.4 or more) and one breather (0.8 or less). Final Boss and Genie have no peak; Queen's Heart has no breather.",
+  as:["Big twists per minute = total big twists ÷ total episode length in seconds × 60.",TW,SC]},
+ {k:"pb",l:"Peak and breather",h:1,type:"groups",groups:[["Peak and breather",[["hockey","1.7 · 0.4 · 1.9 · 0.8"],["doctor","1.4 · 0 · 0.6 · 1.1"],["triplets","1.7 · 1.4 · 0.8"]]],["No peak",[["finalboss","0.9 · 0.7"],["genie","0.6 · 1.2"]]],["No breather",[["queen","1.9 · 1.7 · 2.6"]]]],title:"Peak and breather: the rhythm of big twists",scale:"Big twists per minute, episode by episode",
+  take:"Grouped by rhythm, not by average. Some series have a peak episode and a breather episode; some have no peak; one has no breather.",
+  as:["Peak episode: 1.4 or more big twists per minute. Breather episode: 0.8 or less.","Numbers in brackets are big twists per minute in each episode, in order.","The thresholds were set after looking at the data. This is a hypothesis to test with more viewers and series."]},
+ {k:"pull",l:"Pull",h:1,f:"pull",dp:1,max:4,min:1,ticks:[1,2,3,4],title:"Pull: would I watch the next episode?",scale:"1 (would stop) – 4 (must watch next)",
+  take:"Doctor Boss and Triplets lead. Genie's long prologue in episode 1 dragged its score down.",as:[SC]},
+ {k:"emo",l:"Emotion",h:1,f:"emo",dp:1,max:4,min:1,ticks:[1,2,3,4],title:"Emotional intensity",scale:"1 (flat) – 4 (very moving)",
+  take:"Emotion stays modest everywhere. Believable people score higher than fast plot: Queen's Heart has the most twists and the lowest emotion.",as:[SC]},
+ {k:"profiles",l:"Series profiles",h:1,type:"profiles",title:"Promise, genres, and who saves",scale:"Qualitative",
+  take:"Two story engines repeat: a powerful man protects a vulnerable heroine (Doctor Boss, Triplets, Genie), or a humiliated character reveals a hidden status (Queen's Heart, Final Boss, Hockey Star).",
+  as:["My reading of episodes 1–5 plus the trailer, where there is one. Sex and violence are noted as seen on screen, plus the trailer and the ad where marked."]}
+];
+const $=s=>document.querySelector(s), esc=v=>String(v).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const fmt=(v,dp=1)=>v==null?"Not logged":(typeof v==="number"?v.toFixed(dp):v);
+const NS="http://www.w3.org/2000/svg";
+function svgEl(svg,t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e}
+
+function scatter(){
+  const W=900,H=460,L=56,R=30,Tp=24,B=56;
+  const X=v=>L+v/2.2*(W-L-R), Y=v=>H-B-(v-1)/3*(H-Tp-B);
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("style","min-width:560px");svg.setAttribute("role","img");svg.setAttribute("aria-label","Scatter of big twists per minute against pull");
+  for(let v=0;v<=2.2001;v+=0.5){svgEl(svg,"line",{x1:X(v),x2:X(v),y1:Tp,y2:H-B,stroke:"rgba(255,255,255,.08)"});svgEl(svg,"text",{x:X(v),y:H-B+22,"text-anchor":"middle","font-size":12,fill:"rgba(255,255,255,.45)"},v.toFixed(1))}
+  for(let v=1;v<=4;v++){svgEl(svg,"line",{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:"rgba(255,255,255,.08)"});svgEl(svg,"text",{x:L-12,y:Y(v)+4,"text-anchor":"end","font-size":12,fill:"rgba(255,255,255,.45)"},v)}
+  svgEl(svg,"text",{x:(L+W-R)/2,y:H-12,"text-anchor":"middle","font-size":13,fill:"rgba(255,255,255,.68)"},"Big twists per minute");
+  svgEl(svg,"text",{x:16,y:(Tp+H-B)/2,"text-anchor":"middle","font-size":13,fill:"rgba(255,255,255,.68)",transform:`rotate(-90 16 ${(Tp+H-B)/2})`},"Pull (1–4)");
+  const pos={hockey:[14,18,"start"],doctor:[-14,5,"end"],triplets:[0,-16,"middle"],finalboss:[0,-16,"middle"],genie:[0,26,"middle"],queen:[0,-16,"middle"]};
+  S.forEach(d=>{const cx=X(d.big),cy=Y(d.pull),[dx,dy,a]=pos[d.id];
+    svgEl(svg,"circle",{cx,cy,r:9,fill:"#F70367",stroke:"#0C0C26","stroke-width":2});
+    svgEl(svg,"text",{x:cx+dx,y:cy+dy,"text-anchor":a,"font-size":14,"font-weight":500,fill:"#fff"},d.s);
+    svgEl(svg,"text",{x:cx+dx,y:cy+dy+15,"text-anchor":a,"font-size":11,fill:"rgba(255,255,255,.45)"},`${d.big.toFixed(1)} / min · pull ${d.pull.toFixed(1)}`);
+  });
+  return svg;
+}
+function bars(t){
+  const rows=S.slice().sort((a,b)=>(b[t.f]??-1)-(a[t.f]??-1));
+  const W=900,rowH=44,L=150,R=90,H=rows.length*rowH+36,mn=t.min||0,sx=v=>(v-mn)/(t.max-mn)*(W-L-R);
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("style","min-width:520px");svg.setAttribute("role","img");svg.setAttribute("aria-label",t.title);
+  const defs=svgEl(svg,"defs",{});const g=document.createElementNS(NS,"linearGradient");g.id="gb";g.innerHTML='<stop offset="0" stop-color="#F70367"/><stop offset="1" stop-color="#7A0FFF"/>';defs.appendChild(g);
+  rows.forEach((d,i)=>{const y=i*rowH+8,v=d[t.f],w=v==null?0:Math.max(2,sx(v));
+    svgEl(svg,"text",{x:L-14,y:y+20,"text-anchor":"end","font-size":14,"font-weight":500,fill:"#fff"},d.s);
+    svgEl(svg,"rect",{x:L,y:y+4,width:W-L-R,height:24,rx:6,fill:"rgba(255,255,255,.05)"});
+    if(v!=null)svgEl(svg,"rect",{x:L,y:y+4,width:w,height:24,rx:6,fill:"url(#gb)"});
+    const label=v==null?"Not logged":(t.lbl?`${d[t.lbl]} (${v}%)`:v.toFixed(t.dp)+(t.unit||""));
+    svgEl(svg,"text",{x:v==null?L+12:L+w+10,y:y+21,"font-size":13,fill:v==null?"rgba(255,255,255,.45)":"#32DCFF","font-weight":600},label);
+  });
+  const yb=rows.length*rowH+12;(t.ticks||[]).forEach(v=>{svgEl(svg,"line",{x1:L+sx(v),x2:L+sx(v),y1:8,y2:yb,stroke:"rgba(255,255,255,.1)","stroke-dasharray":"3 3"});svgEl(svg,"text",{x:L+sx(v),y:yb+16,"text-anchor":"middle","font-size":11,fill:"rgba(255,255,255,.45)"},v+(t.unit==="%"?"%":""))});
+  return svg;
+}
+function table(t){
+  const w=document.createElement("div");w.className="tbl";
+  w.innerHTML=`<table><thead><tr>${t.cols.map(c=>`<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${S.map(d=>`<tr>${t.cols.map(c=>`<td class="${c[1]==='cam'?'wrap':''}">${esc(c[2]?fmt(d[c[1]],1):(d[c[1]]??"Not logged"))}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  return w;
+}
+function profiles(){
+  const w=document.createElement("div");w.className="profiles";
+  w.innerHTML=S.map(d=>`<article class="prof"><h3>${esc(d.s)}</h3><dl style="margin:0">
+   <dt>Promise</dt><dd>${esc(d.promise)}</dd><dt>Genres</dt><dd>${esc(d.genres)}</dd><dt>Sex</dt><dd>${esc(d.sex)}</dd><dt>Violence</dt><dd>${esc(d.viol)}</dd><dt>Protagonist</dt><dd>${esc(d.hero)}</dd>
+   <dt>Status at the start</dt><dd>${esc(d.open)}</dd><dt>Power over the series</dt><dd>${esc(d.power)}</dd>
+   <dt>Villain</dt><dd>${esc(d.villain)}</dd><dt>Who saves the protagonist</dt><dd>${esc(d.saves)}</dd></dl></article>`).join("");
+  return w;
+}
+const TAGS={
+ hockey:{o:[],t:["Hidden identity","Feel-good", "Status reversal","Marital betrayal","Secret pregnancy","Medical drama","Sports"]},
+ doctor:{o:[],t:["Secret pregnancy","Boss romance","Protector","Thriller","Sex","Family drama","Cinderella"]},
+ triplets:{o:[],t:["Sweet romance","Age gap", "Secret pregnancy","Billionaire / CEO","Protector","Family abuse","Workplace bullying","Comic relief","Light sex scene"]},
+ finalboss:{o:[],t:["Hidden identity","Billionaire / CEO", "Status reversal","Contract marriage","Revenge","War flashback"]},
+ genie:{o:[],t:["Fantasy","Protector","Contract marriage","Period prologue","Corporate"]},
+ queen:{o:[],t:["Hidden identity","Status reversal","Marital betrayal","Revenge","Contract marriage","Military"]}
+};
+function genre(){
+  const w=document.createElement("div");w.className="tagrows";
+  w.innerHTML=S.map(d=>{const g=TAGS[d.id];return `<div class="tagrow"><div class="tname">${esc(d.s)}</div><div class="tags">${g.o.map(x=>`<span class="tag off">${esc(x)}</span>`).join("")}${g.t.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div></div>`}).join("");
+  return w;
+}
+function groups(t){
+  const w=document.createElement("div");w.className="grp";
+  w.innerHTML=t.groups.map(([lab,items])=>`<div class="grow"><div class="glab">${esc(lab)}</div><div class="gitems">${items.map(([id,v])=>{const d=S.find(x=>x.id===id);return `<span class="gchip"><b>${esc(d.s)}</b>${v?`<i>${esc(v)}</i>`:""}</span>`}).join("")}</div></div>`).join("");
+  return w;
+}
+function show(k){
+  const t=T.find(x=>x.k===k)||T[0];
+  document.querySelectorAll(".pill").forEach(p=>p.setAttribute("aria-selected",p.dataset.k===t.k));
+  const p=$("#panel");p.innerHTML=`<h2>${t.title}</h2><p class="take">${t.take}</p>`;
+  const box=document.createElement("div");box.className="chart";
+  box.appendChild(t.type==="groups"?groups(t):t.type==="scatter"?scatter():t.type==="table"?table(t):t.type==="profiles"?profiles():t.type==="genre"?genre():bars(t));
+  p.appendChild(box);
+  const ex=document.createElement("div");ex.className="extra";
+  ex.innerHTML=`<p class="scale"><b>Scale</b> ${esc(t.scale)}</p>`+(t.as&&t.as.length?`<div><b class="h">Definitions and assumptions</b><ul class="as">${t.as.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>`:"")+(t.miss?`<div class="miss"><b class="h">Missing data, to fill in</b><ul class="as">${t.miss.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>`:"");
+  p.appendChild(ex);
+}
+const pb=t=>`<button class="pill" role="tab" data-k="${t.k}">${t.l}</button>`;
+$("#pills").innerHTML=T.filter(t=>!t.h).map(pb).join("");$("#pills2").innerHTML=T.filter(t=>t.h).map(pb).join("");
+document.querySelector(".rows").addEventListener("click",e=>{const b=e.target.closest(".pill");if(!b)return;show(b.dataset.k);try{history.replaceState(null,"","#"+b.dataset.k)}catch(_){}});
+const SUMS={
+ "hockey": {
+  "syn": "Renee left her life as a billionaire heiress to nurse her husband Levi out of a coma and back into the NHL. When she gets pregnant, Madeline moves in on him, and Levi starts choosing the other woman.",
+  "take": "This is the classic peak and breather. Episode 1 hits hard: the pregnancy, the brother you think is a lover, the villain's threat. Episode 2 slows down: small, personal blows until the crash at the end. Episode 3 hits again with the car crash and Levi running to her first. Episode 4 lets you sit in Renee's pain. About one big twist a minute on average, but never evenly. It's filmed with real actors, and it has the highest emotion score (2.3). The voiceover starts with the villain and switches to Renee exactly at the emotional peak. Every twist is marked by a music change or a 'shatter' sound. Violence is physical but light (a push, a crash, a bottle thrown), sex is only implied. One gap: the trailer sells revenge and a comeback, and the first four episodes only show the victim."
+ },
+ "doctor": {
+  "syn": "Molly, a poor med intern, has a one-night stand with a stranger. A month later she's pregnant, and the stranger is her new boss, Dr. Graham Weston. Her jealous family and a woman from Graham's past try to keep them apart.",
+  "take": "The most interesting structure of the six, because it keeps jumping genres. Episode 2 plays like a thriller: a creepy doctor drugs her and chases her. Episodes 3 and 4 turn romantic and very sexual, with an explicit scene in the car. Episode 5 becomes a family drama with a Cinderella-style evil family. Each jump brings a new engine, so pull holds even when the plot rests: episode 3 has no big twist and still kept me at 3. The rhythm is a peak in episode 2, then breathers, then a climb back. Close-ups dominate, and the voiceover lets us hear both of them think. The weak spot is a coincidence: he believes she's the girl who saved him as a kid. A test viewer said that's exactly where she would stop."
+ },
+ "triplets": {
+  "syn": "Daisy, 19, works in a warehouse to pay for college, but her father steals her savings. Desperate, she takes a job at a strip club, spends one night with billionaire Marcus Sinclair, and finds out she's pregnant with triplets.",
+  "take": "The series behind the top ad, and you can feel why. It opens on the shock (pregnant, triplets, 'he told me he was sterile') in the first 15 seconds, then goes back to explain. Same twist rate as Hockey Star, but it cuts the fastest of the six (1.9 seconds a shot) and keeps the most characters on screen, so the pace comes from editing, not from more plot. It also lets you breathe: a small comic beat with the factory girls pitching themselves to Marcus. Violence is the most explicit of the six (her father beats her, there's blood), and that danger is what grabs you. The bar episode is one long peak: she's drugged in a bar, they sleep together (a light sex scene), and he saves her in the factory. A test viewer's strongest moment was fear for Daisy. Filmed, close-ups, it feels real."
+ },
+ "finalboss": {
+  "syn": "Kingsley comes back from the battlefield and his childhood sweetheart dumps him as a loser. Nobody knows he's the secret King of King's Corp, the richest man on earth. Then a rich woman offers him a contract marriage.",
+  "take": "A clear premise, the hidden-identity fantasy with a male lead, but it doesn't peak. The big reveal (he's the CEO) comes early, and then the story mostly sets things up. About 0.8 big twists a minute, with no episode above 0.9. The voiceover is heavy and explains how he feels instead of letting the actor show it. Sound effects are saved for the end of the episode. Filmed with real actors, a war flashback for action, no sex, light violence (a slap)."
+ },
+ "genie": {
+  "syn": "In 1966 a poor man finds a lamp and wishes to be rich. Sixty years later, dying, he uses his last wish: protect my granddaughter. The genie shows up as Elijah, the man she has to marry to keep the family company.",
+  "take": "It's fully AI, with the longest shots of the six (3.4 seconds on average). The bigger problem is the opening: episode 1 is a 4:41 prologue set in 1966, with shots up to 37 seconds long and no open question at the end. I nearly stopped (pull 1). Episode 2 cuts much faster and climbs back to 2.5. It doesn't peak: the highest is 1.2 big twists a minute. Fantasy and corporate romance, no sex and no violence, so there's no threat to fear for yet. In this format a long prologue costs pull: start with the promise and explain later."
+ },
+ "queen": {
+  "syn": "Chloe, an air traffic controller and secret aviation heiress, helps her husband Trevor become a star pilot. On their anniversary he betrays her with Mia. She enters a contract marriage with Lucas, an Air Force general in disguise, and together they take revenge.",
+  "take": "It has no breather: 2 big twists a minute, never below 1.7, and the most sound effects of the six. Every scene is a shock, so none of them lands, and it got the lowest emotion score I gave (1). It's fully AI, one location, one genre. Humiliation is the violence here (her hand gets stepped on), no sex. It's the counterexample: the highest big-twist rate of the six, yet a pull score of only 2.0."
+ }
+};
+document.getElementById("sums").innerHTML=S.map(d=>`<article class="sum"><h3>${esc(d.n)}</h3><p class="promise">${esc(d.promise)}</p><div class="nums"><span>${d.big.toFixed(1)} big twists / min</span><span>Pull ${d.pull.toFixed(1)}</span><span>Emotion ${d.emo.toFixed(1)}</span><span>${esc(d.prod)}</span></div><p>${esc(SUMS[d.id].syn)}</p><p class="take2"><b>My take.</b> ${esc(SUMS[d.id].take)}</p></article>`).join("");
+show((location.hash||"").slice(1)||"genre");
+
+(function(){
+ const P=[["Hockey Star",1.9,0.4],["Doctor Boss",1.4,0],["Triplets",1.7,0.8],["Final Boss",0.9,0.7],["Genie",1.2,0.6],["Queen's Heart",2.6,1.7]];
+ const W=560,H=340,L=48,R=20,T=16,B=44,M=2.8,X=v=>L+v/M*(W-L-R),Y=v=>T+(1-v/2)*(H-T-B);
+ const t=(x,y,s,o)=>`<text x="${x}" y="${y}" font-size="${o.fs||11}" text-anchor="${o.a||'start'}" fill="${o.c||'rgba(255,255,255,.5)'}" ${o.w?'font-weight="600"':''}>${s}</text>`;
+ let g=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Each series: strongest episode vs calmest episode">`;
+ g+=`<rect x="${X(1.4)}" y="${Y(0.8)}" width="${X(M)-X(1.4)}" height="${Y(0)-Y(0.8)}" fill="rgba(247,3,103,.14)"/>`;
+ g+=`<line x1="${X(1.4)}" y1="${Y(2)}" x2="${X(1.4)}" y2="${Y(0)}" stroke="rgba(255,255,255,.25)" stroke-dasharray="4 4"/><line x1="${X(0)}" y1="${Y(0.8)}" x2="${X(M)}" y2="${Y(0.8)}" stroke="rgba(255,255,255,.25)" stroke-dasharray="4 4"/>`;
+ g+=t(X(M)-8,Y(0)-8,"Peak and breather",{a:"end",c:"rgba(255,255,255,.6)",w:1,fs:12});
+ g+=t(X(0)+8,Y(0)-8,"No peak",{})+t(X(M)-8,Y(2)+14,"No breather",{a:"end"});
+ [0,1,2].forEach(v=>g+=t(L-8,Y(v)+4,v,{a:"end"}));[0,1,2].forEach(v=>g+=t(X(v),H-B+18,v,{a:"middle"}));
+ g+=t((L+W-R)/2,H-6,"Strongest episode (big twists per minute) → peak at 1.4+",{a:"middle"});
+ g+=`<text transform="translate(13 ${(T+H-B)/2}) rotate(-90)" font-size="11" text-anchor="middle" fill="rgba(255,255,255,.5)">Calmest episode → breather at 0.8 or less</text>`;
+ const off={"Final Boss":[0,-10,"middle"],"Genie":[0,18,"middle"],"Triplets":[0,-10,"middle"],"Hockey Star":[0,-10,"middle"],"Doctor Boss":[8,-6,"start"],"Queen's Heart":[-9,4,"end"]};
+ P.forEach(([n,x,y])=>{const good=x>=1.4&&y<=0.8,c=good?"#F70367":"#32DCFF",o=off[n];
+  g+=`<circle cx="${X(x)}" cy="${Y(y)}" r="6" fill="${c}"/>`+t(X(x)+o[0],Y(y)+o[1],n,{a:o[2],c,w:1,fs:12});});
+ g+="</svg>";
+ document.getElementById("pbcharts").innerHTML=`<div class="pbc">${g}<p style="margin:8px 4px 0;font-size:14px;opacity:.8"><b>Hockey Star.</b> Episode 1 is a peak with 4 big turns: Renee never told Levi who she really is, she\'s pregnant, the man we think is her lover is her brother, and Madeline vows "Levi Carlson is going to be mine." Episode 2 is a breather: small, personal blows (Levi pushes Renee, Madeline takes her front seat), and only one big turn, the crash at the very end.<br><br><b>Doctor Boss.</b> Episode 2 is a peak: Molly is drugged by a creepy doctor, her story crosses Graham\'s, and he believes she\'s the girl who saved him as a child. Episode 3 is a breather with no big turns at all: the whole episode happens in one car, driven by sexual tension, not by plot.</p></div>`;
+})();
+</script>

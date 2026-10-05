@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Part 2: The ads</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+:root{--page:#0C0C26;--pink:#F70367;--violet:#7A0FFF;--cyan:#32DCFF;--fg:#FFFFFF;--fg2:rgba(255,255,255,.72);--fg3:rgba(255,255,255,.5);--line:rgba(255,255,255,.15);--surf:rgba(255,255,255,.05);--surf2:rgba(255,255,255,.09);--font:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--fg);font-family:var(--font);font-size:16px;line-height:26px}
+.header{position:sticky;top:0;z-index:5;height:64px;display:flex;align-items:center;gap:12px;padding-inline:max(16px,4vw);background:rgba(10,10,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:12px}
+.mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pink),var(--violet))}
+.header b{font-weight:600}
+.header span{color:var(--fg2);font-size:14px;margin-inline-start:auto}
+main{max-width:1100px;margin:0 auto;padding:48px max(16px,4vw) 80px;display:grid;gap:40px}
+h1{font-size:36px;line-height:1.15;font-weight:700;margin:0;text-wrap:balance}
+h2{font-size:24px;line-height:32px;font-weight:700;margin:0}
+h3{font-size:16px;line-height:24px;font-weight:600;margin:0}
+.lead{color:var(--fg2);max-width:70ch;margin:12px 0 0}
+section{display:grid;gap:16px}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:16px;min-width:0}
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:6px;align-content:start}
+.card .k{font-size:28px;font-weight:700;line-height:1.1}
+.card p{margin:0;color:var(--fg2);font-size:14px;line-height:22px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:20px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--fg3);font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+td.n{text-align:right;white-space:nowrap}
+td.app{white-space:nowrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:6px;vertical-align:baseline}
+.decision{border-radius:16px;padding:24px;background:linear-gradient(135deg,rgba(247,3,103,.18),rgba(122,15,255,.18));border:1px solid rgba(247,3,103,.5);display:grid;gap:8px}
+.decision .k{font-size:32px;font-weight:700}
+ul{margin:0;padding-inline-start:20px;display:grid;gap:8px}
+li::marker{color:var(--pink)}
+.note{color:var(--fg3);font-size:13px;line-height:20px;margin:0}
+a{color:var(--cyan)}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--fg2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sq{display:inline-block;width:10px;height:10px;border:2px solid var(--fg2)}
+.ci{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--fg2)}
+#tip{position:fixed;pointer-events:none;background:#0A0A0A;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;line-height:18px;display:none;z-index:10;max-width:260px}
+.bars{display:grid;gap:14px}
+.bar{display:grid;grid-template-columns:120px 1fr 80px;align-items:center;gap:12px;font-size:14px}
+.bar .t{height:14px;border-radius:0 4px 4px 0;background:var(--surf2)}
+.bar .f{height:14px;border-radius:0 4px 4px 0}
+.two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-top:20px}
+@media(max-width:600px){h1{font-size:28px}.bar{grid-template-columns:90px 1fr 64px}}
+
+.pnav{margin-inline-start:auto;display:flex;gap:4px}
+.pnav a{padding:6px 12px;border-radius:999px;color:var(--fg2);font-size:14px;line-height:20px;text-decoration:none;white-space:nowrap}
+.pnav a:hover{color:var(--fg)}
+.pnav a[aria-current]{background:var(--surf2);color:var(--fg);font-weight:600}
+.next{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;border-radius:16px;border:1px solid rgba(247,3,103,.5);background:linear-gradient(135deg,rgba(247,3,103,.14),rgba(122,15,255,.14));color:var(--fg);text-decoration:none}
+.next b{font-size:18px}.next span{color:var(--fg2);font-size:14px}
+@media(max-width:600px){.header>a b{display:none}.pnav a{padding:6px 10px}}
+
+.tl{display:grid;gap:8px}
+.tl .row{position:relative;height:28px}
+.tl .bands .band{position:absolute;top:0;bottom:0;background:var(--surf2);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;align-items:center;padding-inline:6px}
+.tl .band span{font-size:12px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl .ticks i{position:absolute;top:4px;width:3px;height:20px;margin-left:-1px;border-radius:2px;background:var(--pink)}
+.tl .rh i{position:absolute;top:6px;height:16px;border-radius:4px;min-width:4px}
+.tl .axis{display:flex;justify-content:space-between;font-size:12px;color:var(--fg3)}
+.sw{display:inline-block;width:14px;height:10px;border-radius:3px}
+.vid{display:grid;gap:24px;grid-template-columns:minmax(220px,340px) 1fr;align-items:start}
+.frame{aspect-ratio:9/16;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:700px){.vid{grid-template-columns:1fr}.frame{max-width:340px;width:100%;margin:0 auto}}
+</style></head><body>
+<header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html" aria-current="page">Part 2</a><a href="part3.html">Part 3</a></nav></header>
+<main>
+<div><div class="eyebrow">Part 2</div><h1>The Triplets ad, and a new ad for Doctor Boss</h1>
+<p class="lead">What made the top ad work, and how I applied it to a new series.</p></div>
+
+<section><div class="eyebrow">Part 2a</div><h2>The Triplets ad</h2>
+<p class="lead" style="margin:0">The linked creative runs about 14 minutes: a long-form ad of early episodes, recut and reordered, ending just before the payoff.</p>
+<div class="panel"><h3>The ad at a glance</h3>
+<div class="tl" id="tl1"></div>
+<p class="note">Each tick is a big twist: the 10 big twists out of 35 turning points I identified. A big twist changes the story's direction or the balance of power.</p></div>
+<div class="two">
+<div class="panel"><div class="eyebrow">The hook · 0:00-0:34</div><h3>What happens</h3><p style="margin:0;color:var(--fg2)">A hospital bed. 'You're pregnant' (0:04), 'with triplets' (0:05), 'he told me he was sterile' (0:13), and she doesn't know who the father is.</p></div>
+<div class="panel"><div class="eyebrow">Why it works</div><h3>It opens on the result</h3><p style="margin:0;color:var(--fg2)">Three shocks in 15 seconds set up the premise and plant three questions: how, who, and how will she manage?</p></div>
+</div>
+<div class="panel"><h3>Key turning points</h3>
+<div class="tbl"><table><thead><tr><th>Time</th><th>What happens</th><th>What it adds</th></tr></thead><tbody>
+<tr><td class="n">0:04</td><td>She is pregnant.</td><td>The first shock; the whole story starts here.</td></tr>
+<tr><td class="n">0:05</td><td>With triplets.</td><td>Raises the stakes: three babies, no money.</td></tr>
+<tr><td class="n">1:13</td><td>He drinks the glass with the drug himself.</td><td>The danger flips: the drug was not meant for her.</td></tr>
+<tr><td class="n">4:48</td><td>His parents learn the girl he slept with is pregnant with triplets.</td><td>The secret reaches his family.</td></tr>
+<tr><td class="n">5:00</td><td>Marcus thinks she got pregnant on purpose to trap him.</td><td>Conflict inside the romance: will he believe her?</td></tr>
+<tr><td class="n">6:55</td><td>Her father and brother force her to marry a 70-year-old.</td><td>The threat becomes concrete.</td></tr>
+<tr><td class="n">7:47</td><td>Her father breaks a bottle on her head.</td><td>The strongest emotional moment. A blow to the head can hurt her babies, and the villains are now clearly the bad guys.</td></tr>
+<tr><td class="n">9:07</td><td>She names the father: Marcus Sinclair.</td><td>The villains learn who he is; she didn't even know.</td></tr>
+<tr><td class="n">11:30</td><td>Marcus sets off to save her, but she calls and he doesn't answer.</td><td>A race against time begins.</td></tr>
+<tr><td class="n">13:50</td><td>A second before the blow, Marcus and his men run toward her. The ad ends.</td><td>The rescue is shown, not delivered.</td></tr>
+</tbody></table></div></div>
+<div class="panel"><h3>The narrative</h3>
+<div class="tbl"><table><thead><tr><th>Act</th><th>Time</th><th>What it does</th></tr></thead><tbody>
+<tr><td><b>Act 1:</b> How did this happen?</td><td class="n">0:40-2:55</td><td>Leaves the night unclear. Marcus looks dangerous, then turns out to be a victim too, so he is interesting before he is good.</td></tr>
+<tr><td><b>Act 2:</b> His world. Rich, but not happy</td><td class="n">3:10-6:05</td><td>Marcus has everything except love, and a poor, suffering cleaning girl is the one who reaches him. He sends away the rich neighbors' daughter, so he isn't after status, and his family stands behind him. One flaw keeps the romance tense: he thinks she got pregnant on purpose to trap him.</td></tr>
+<tr><td><b>Act 3:</b> Her world, an escalating Via Dolorosa</td><td class="n">6:15-13:35</td><td>About seven minutes of violence and humiliation, each beat worse than the last, cut against his warm home. Her family cares about money, not about her or the babies; his parents want the triplets, no matter who the mother is.</td></tr>
+<tr><td><b>The peak</b></td><td class="n">13:35-13:50</td><td>The heavy tool, the slow motion, the laugh, and Marcus running in. Cut.</td></tr>
+</tbody></table></div></div>
+<div class="cards">
+<div class="card"><div class="eyebrow">Story loops · 1</div><div class="k" style="font-size:22px">Seeds</div><p>The first 30 seconds plant how, who, and how will she manage.</p></div>
+<div class="card"><div class="eyebrow">Story loops · 2</div><div class="k" style="font-size:22px">Growth</div><p>The ad answers each one: the flashback shows how, the reveal shows who, her family shows what she faces. Smaller loops along the way: is Marcus good, will his family accept her, will he believe her, will she lose the babies?</p></div>
+<div class="card"><div class="eyebrow">Story loops · 3</div><div class="k" style="font-size:22px">A new question</div><p>By the end every opening question is answered, but a bigger one is open: will he save her in time? That is the reason to install.</p></div>
+</div>
+<div class="panel"><h3>Why I think this creative won</h3><ul>
+<li><b>It starts at the result.</b> The first 15 seconds set up the premise, and the viewer stays to find out how.</li>
+<li><b>First unclear, then clear good and bad.</b> Marcus is interesting because we don't know him; then the family becomes the clear villain.</li>
+<li><b>Contrast editing.</b> His warm, rich home is cut against her standing in the rain, bleeding.</li>
+<li><b>Escalating suffering.</b> Each beat is worse than the last. In my test group, the moment that grabbed the viewer was fear for Daisy, not the twists.</li>
+<li><b>She doesn't deserve it.</b> She returned the money, so the viewer wants the payoff badly.</li>
+<li><b>The rescue starts but doesn't end.</b> Marcus runs to her, and the ad cuts. The only way to find out is to install.</li>
+<li><b>It's the selection and the order.</b> The ad is built from the series' own scenes; what makes it work is which ones it picks and the order it puts them in.</li>
+</ul></div>
+</section>
+
+<section><div class="eyebrow">Part 2b</div><h2>A new ad for Doctor Boss Is My Baby Daddy</h2>
+<div class="vid">
+<div class="frame"><iframe src="https://drive.google.com/file/d/1tiNRDoOlMuDsODa_6K1umcBZx0rF-awq/preview" allow="autoplay; fullscreen" allowfullscreen title="My cut of the new Doctor Boss ad"></iframe></div>
+<div style="display:grid;gap:16px;align-content:start">
+<div class="panel"><div class="eyebrow">Watch my cut of the new ad (8:14)</div><h3>Why this series</h3><ul>
+<li><b>Same group as Triplets:</b> peak and breather, and the same pull score.</li>
+<li><b>Same engine:</b> one night with a rich man, a secret pregnancy, an evil family that wants money, and a man who can protect her.</li>
+<li><b>Even the beats rhyme:</b> her father sells her to a 70-year-old there; her mother sells her to a 90-year-old here.</li></ul></div>
+<p class="note">Video not loading? <a href="https://drive.google.com/file/d/1tiNRDoOlMuDsODa_6K1umcBZx0rF-awq/view">Open it in Drive</a>.</p>
+</div></div>
+<div class="panel"><h3>The ad at a glance</h3>
+<div class="tl" id="tl2"></div>
+<div class="legend"><span><i class="sw" style="background:var(--pink)"></i>Peak</span><span><i class="sw" style="background:var(--cyan)"></i>Breather</span></div><h3>Peaks and breathers</h3><div class="tbl"><table><thead><tr><th>Ad time</th><th>Rhythm</th><th>Scene</th></tr></thead><tbody><tr><td class="n">0:00-0:11</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The pregnancy</td></tr><tr><td class="n">0:31-0:56</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The drug and the chase</td></tr><tr><td class="n">2:01-3:11</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The love scene in the car</td></tr><tr><td class="n">5:27-6:26</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The nightclub</td></tr><tr><td class="n">6:26-7:22</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The confrontation at home with her mother and Mr. Holtz</td></tr><tr><td class="n">7:22-7:42</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The broom, then the ending</td></tr></tbody></table></div></div>
+<div class="panel"><h3>The ad, beat by beat</h3>
+<p class="note">Source timecodes refer to the official ReelShort videos: <a href="https://www.youtube.com/watch?v=DA9d2QEhyyM">V1 = EP1-9</a>, <a href="https://www.youtube.com/watch?v=kknUuMvFg0k">V2 = EP9-20</a>.</p>
+<div class="tbl"><table><thead><tr><th>Ad time</th><th>Source</th><th>Beat</th></tr></thead><tbody>
+<tr><td class="n">0:00-0:11</td><td class="app">V1 4:07-4:18</td><td><b>Opening, the result.</b> Molly finds out she is pregnant: 'My mom is going to kill me.' Three questions in 11 seconds: how, who, and how will she survive her family?</td></tr>
+<tr><td class="n">0:11-3:41</td><td class="app">V1 0:22-3:52</td><td><b>Act 1, how it happened.</b> 'You desperate for cash?' She is poor; a creepy doctor drugs and chases her; she runs into Graham, a rich stranger, and they have sex in his car. Twist: he thinks she is a gold digger, the flaw that drives the ad's ending.</td></tr>
+<tr><td class="n">3:41-5:27</td><td class="app">V1 4:26-5:47, 6:46-7:08</td><td><b>Act 2, her world.</b> Cinderella at home: cleaning, violence, a mother who only wants money. She starts her internship and finds out the stranger is her new boss, Dr. Graham Weston.</td></tr>
+<tr><td class="n">5:27-6:26</td><td class="app">V2 1:41-2:40</td><td><b>Act 3, the nightclub.</b> Pregnant and broke, she works as a waitress; drunk men harass her. Graham walks in and saves her: one rescue, shown in full.</td></tr>
+<tr><td class="n">6:26-7:22</td><td class="app">V2 8:01-8:56</td><td><b>Mr. Holtz.</b> Her mother sets her up with a 90-year-old, then finds out she is pregnant and calls her a slut.</td></tr>
+<tr><td class="n">7:22-7:42</td><td class="app">V2 10:38-10:58</td><td><b>The broom.</b> Her mother attacks her to force an abortion. Cut before Graham arrives.</td></tr>
+<tr><td class="n">7:42-8:14</td><td class="app">V2 14:14-14:46</td><td><b>Closing, the cliffhanger.</b> Hospital. The baby is okay. Graham walks in. She thinks he'll see her as trapping him, and asks out loud: 'Dr. Simpson, can you arrange an abortion for me?' One shot of Graham's face. Cut.</td></tr>
+</tbody></table></div></div>
+<div class="panel"><h3>Story loops</h3><p style="margin:0;color:var(--fg2)">The opening seeds how, who, and how will she survive. The ad answers how and who, shows what she is up against, and ends on a bigger question. The flaw planted in Act 1 (he thinks she's a gold digger) drives her final decision, so the cliffhanger grows out of the story. It is also not a misleading ad: every scene comes from episodes 1-20, and it promises only what those episodes deliver.</p></div>
+<div class="two">
+<div class="panel"><h3>How it applies what worked in Triplets</h3><ul>
+<li><b>Start at the result:</b> the pregnancy reveal opens the ad.</li>
+<li><b>First unclear, then clear good and bad:</b> Graham seems to judge her; her mother becomes the clear villain.</li>
+<li><b>Contrast:</b> his world of success against her home of cleaning, violence and money.</li>
+<li><b>Escalating suffering:</b> an old man, 'slut', a broom, a hospital bed.</li>
+<li><b>She doesn't deserve it:</b> she would rather lose everything than trap him.</li>
+<li><b>Show the protector once, hold back the ending:</b> he saves her at the nightclub; the ad stops before the next rescue.</li></ul></div>
+<div class="panel"><h3>What I kept short or left out</h3><ul>
+<li><b>The childhood rescue coincidence:</b> one 10-second flashback (1:31-1:41), left as a question. One test viewer said that is where she would stop watching; a second found it intriguing. So I kept it short.</li>
+<li><b>The fiancée:</b> she only arrives around episode 20.</li>
+<li><b>The second rescue:</b> the broom scene is cut before Graham arrives, so the wish for a rescue keeps building.</li>
+<li><b>The hospital storyline:</b> the staff treat her badly at work; left out to keep one clear storyline, and because it only develops after episode 30.</li></ul></div>
+</div>
+<div class="panel"><h3>Two endings: an A/B test</h3>
+<p class="note">Both versions are the same up to the broom attack (ad 0:00-7:42).</p>
+<div class="tbl"><table><thead><tr><th></th><th>Ending A: her choice</th><th>Ending B: danger</th></tr></thead><tbody>
+<tr><td>Ends on</td><td>The hospital: will she end the pregnancy, and will Graham stop her?</td><td>The broom attack, a second before Graham arrives</td></tr>
+<tr><td>Length</td><td>8:14</td><td>7:42</td></tr>
+<tr><td>Why test it</td><td>A stronger character moment. This is my cut.</td><td>Closest to Triplets, and safer for ad platforms</td></tr>
+</tbody></table></div>
+<ul><li><b>What I measure:</b> conversion, how many reach the paywall per 1,000 ad impressions. I also watch how many open the app and start watching.</li>
+<li><b>Decision rule:</b> run both endings to the same audience; the one with the better conversion wins.</li></ul></div>
+<div class="panel"><h3>Length</h3><p style="margin:0;color:var(--fg2)">8:14 or 7:42, well under the 14-minute Triplets ad, which felt too long to my test group. I watched about 15 more episodes in the ReelShort app and chose not to add more storylines: my test group said the ad should stay focused. In the real world I would let the data decide (where viewers drop off, which peaks hold them); without per-episode or per-second data, I relied on my test group.</p></div>
+</section>
+<a class="next" href="part3.html"><span>Next</span><b>Part 3: Licensing →</b></a>
+</main>
+<script>
+(()=>{const f=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function tl(id,total,bands,marks,rhythm){const p=v=>(v/total*100).toFixed(2)+'%';
+ let h='<div class="row bands">'+bands.map(([a,b,l])=>`<div class="band" style="left:${p(a)};width:${p(b-a)}" title="${l} · ${f(a)}-${f(b)}"><span>${l}</span></div>`).join('')+'</div>';
+ if(marks)h+='<div class="row ticks">'+marks.map(([t,l])=>`<i style="left:${p(t)}" title="${f(t)} · ${l}"></i>`).join('')+'</div>';
+ if(rhythm)h+='<div class="row rh">'+rhythm.map(([a,b,k,l])=>`<i style="left:${p(a)};width:${p(b-a)};background:var(--${k=='P'?'pink':'cyan'})" title="${k=='P'?'Peak':'Breather'} · ${l} · ${f(a)}-${f(b)}"></i>`).join('')+'</div>';
+ h+=`<div class="axis"><span>0:00</span><span>${f(total)}</span></div>`;
+ document.getElementById(id).innerHTML=h;}
+tl('tl1',840,[[0,34,'Hook'],[40,175,'Act 1'],[190,365,'Act 2'],[375,815,'Act 3'],[815,830,'Peak']],
+ [[4,'She is pregnant'],[5,'With triplets'],[73,'He drinks the drug'],[288,'His parents learn'],[300,'He thinks she trapped him'],[415,'Forced to marry a 70-year-old'],[467,'The bottle'],[547,'She names the father'],[690,'He sets off, no answer'],[830,'He runs toward her. Cut.']]);
+tl('tl2',494,[[0,11,'Open'],[11,221,'Act 1: how'],[221,327,'Act 2: her world'],[327,386,'Club'],[386,442,'Holtz'],[442,462,'Broom'],[462,494,'End']],null,
+ [[0,11,'P','The pregnancy'],[31,56,'P','The drug and the chase'],[121,191,'B','The love scene in the car'],[327,386,'P','The nightclub'],[386,442,'B','Her mother and Mr. Holtz'],[442,494,'P','The broom, then the ending']]);
+})();
+</script>
+</body></html>

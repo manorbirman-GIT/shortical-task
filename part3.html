@@ -60,6 +60,22 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .hint{display:inline-flex;align-items:center;gap:8px;justify-self:start;padding:8px 14px;border-radius:999px;background:rgba(50,220,255,.12);border:1px solid rgba(50,220,255,.45);color:var(--cyan);font-size:14px;line-height:20px}
 .hint svg{width:16px;height:16px;flex:none;display:inline-block}
 .pt{cursor:pointer}.pt:hover>:first-child{transform-box:fill-box;transform-origin:center;transform:scale(1.6)}
+
+.swipe{display:none}
+@media(max-width:700px){
+#chart{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-inline:-8px;padding-bottom:6px}
+#chart svg{min-width:760px}
+.swipe{display:block}
+.tbl{overflow:visible}
+.tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+.tbl thead{display:none}
+.tbl tr{border-bottom:1px solid var(--line);padding:12px 0}
+.tbl td{border:0;padding:2px 0;text-align:left!important;white-space:normal!important}
+.tbl td[data-label]::before{content:attr(data-label) ": ";color:var(--fg3);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.tbl td.lead-cell{font-weight:600;font-size:15px}
+.tbl td.lead-cell::before{content:none}
+.tbl td.num{display:inline;width:auto;margin-inline-end:8px}
+}
 </style></head><body>
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html" aria-current="page">Part 3</a></nav></header>
 <main>
@@ -79,6 +95,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 <section class="panel"><h2>Every show: daily views vs. platform RPM</h2>
 <div class="hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" fill="currentColor"/></svg>Hover over any dot to see the show behind it (tap on mobile). All 122 shows are here, not only the labelled ones.</div>
 <div class="legend"><span><i class="dot" style="background:#3987e5"></i>StreamHive</span><span><i class="dot" style="background:#d95926"></i>EchoTV</span><span><i class="dot" style="background:#199e70"></i>Zenith</span><span><i class="dot" style="background:#c98500"></i>Aura</span><span><i class="dot" style="background:#d55181"></i>Prism+</span><span><i class="dot" style="background:#008300"></i>NovaPlay</span><span><i class="dot" style="background:#9085e9"></i>VeloCity</span><span><i class="dot" style="background:#e66767"></i>Pulse</span><span><i class="ci"></i>Show</span><span><i class="sq"></i>Chinese original</span></div>
+<p class="note swipe">Swipe sideways to see the whole chart; tap a dot for details.</p>
 <div id="chart"></div>
 <p class="note">Each row of dots is one app. The dashed box is the target zone. The shows discussed below are labelled.</p>
 </section>
@@ -154,4 +171,10 @@ const D={"rows": [{"n": "Dust Road", "cn": false, "a": "VeloCity", "dv": 154920,
  const B2=[["","Crown Fire",79482,"Pulse"],["","Eternal Circle",80880,"Aura"]];
  document.getElementById('bars').innerHTML=B2.map(([g,n,v,a])=>`${g?`<div class="eyebrow" style="margin-top:6px">${g}</div>`:''}<div class="bar"><span>${n}</span><div class="t"><div class="f" style="width:${v/90000*100}%;background:${COL[a]}"></div></div><span style="text-align:right">$${Math.round(v/1000)}K</span></div>`).join('');
 })();
+</script><script>
+document.querySelectorAll('.tbl table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());
+ t.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{
+  if(i===0&&(h[0]===''||h[0]==='#'||h[0]==='Act'||h[0]==='Show'||h[0]==='Signal'))td.classList.add('lead-cell');
+  else if(h[i])td.setAttribute('data-label',h[i]);});
+  if(h[0]==='#'&&tr.children[1]){tr.children[0].textContent='#'+tr.children[0].textContent.replace('#','');tr.children[0].classList.add('num');tr.children[1].classList.add('num');tr.children[1].classList.add('lead-cell');tr.children[1].removeAttribute('data-label');}});});
 </script></body></html>

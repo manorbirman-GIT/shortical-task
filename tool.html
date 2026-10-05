@@ -78,7 +78,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .tbl td.num{display:inline;width:auto;margin-inline-end:8px}
 }
 
-.drop{border:2px dashed var(--line);border-radius:16px;padding:28px;display:grid;gap:12px;justify-items:start;transition:.15s}
+.drop{border:2px dashed var(--line);border-radius:16px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;justify-items:start;transition:.15s}
 .drop.on{border-color:var(--pink);background:rgba(247,3,103,.06)}
 .btn{font:inherit;font-weight:600;font-size:14px;padding:10px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg);display:inline-block;padding:6px 14px;margin-inline-start:6px}
@@ -89,12 +89,24 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .ctl output{color:var(--fg);font-weight:600}
 details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 #checks li{color:var(--fg2)}
-#out:not([hidden]){display:grid}
+#out:not([hidden]){display:grid;gap:40px}
+.badge{display:inline-block;font-style:normal;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;margin-inline-end:6px;white-space:nowrap}
+.badge.lic{background:rgba(247,3,103,.2);color:#ff6fa6;border:1px solid rgba(247,3,103,.6)}
+.badge.con{background:rgba(50,220,255,.12);color:var(--cyan);border:1px solid rgba(50,220,255,.45)}
+.badge.pas{background:var(--surf2);color:var(--fg3);border:1px solid var(--line)}
+tr.pass td{color:var(--fg3)}
+tr.medline td{padding:0;border-bottom:2px dashed var(--pink)}
+tr.medline td div{font-size:12px;color:#ff6fa6;padding:6px 12px;font-weight:600}
+.scroll{max-height:70vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.scroll thead th{position:sticky;top:0;background:#14143a;z-index:1}
+.ctl+h3,.note+h3{margin-top:12px}
+@media(max-width:700px){.scroll{max-height:none;overflow:visible;border:0}tr.medline{padding:0!important}}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .btn.big{font-size:17px;padding:14px 26px}
 .muted{color:var(--fg2);font-size:14px}
 .sr{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.gs{display:grid;gap:8px;width:100%}
+.gs{display:grid;gap:8px;justify-self:stretch;min-width:0;grid-template-columns:minmax(0,1fr)}
+.drop{min-width:0}.drop>*{max-width:100%}
 .gsrow{display:flex;gap:8px;max-width:640px}
 .gsrow input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--fg);background:var(--surf2);border:1px solid var(--line);border-radius:999px;padding:9px 16px}
 .drop .note a{color:var(--fg2)}
@@ -102,7 +114,7 @@ details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 <header class="header"><a href="index.html"><i class="mark" aria-hidden="true"></i><b>Content Strategy</b></a><nav class="pnav" aria-label="Parts"><a href="map.html">Part 1</a><a href="part2.html">Part 2</a><a href="part3.html">Part 3</a><a href="tool.html" aria-current="page">Tool</a></nav></header>
 <main>
 <div><div class="eyebrow">The tool</div><h1>Licensing recommender</h1>
-<p class="lead">Upload a raw performance file and get the same analysis as Part 3 in seconds: data checks, daily views, platform RPM, a weighted score, a top list, shows to avoid and a chart. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
+<p class="lead">Upload a performance file and get a ranked buy list in seconds: every show scored, a line between buy and don't buy, a ceiling for what to offer, the shows to avoid and the data problems to fix. Everything runs in your browser; the file is not uploaded anywhere.</p></div>
 
 <section class="panel">
 <div class="drop" id="drop">
@@ -116,8 +128,23 @@ details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 <p class="note" id="status" role="status"></p>
 </section>
 
-<section class="panel" id="controls" hidden>
-<h2>Settings</h2>
+<div id="out" hidden>
+<section><h2>Full ranking</h2>
+<p class="lead" style="margin:0">Every show, from the highest score to the lowest. The line is the median score: below it, don't buy.</p>
+<div class="cards" id="sum"></div>
+<div class="legend"><span><i class="badge lic">License</i>in the top list: meets both bars</span><span><i class="badge con">Consider</i>above the median, but misses a bar</span><span><i class="badge pas">Pass</i>below the median, or a remake</span></div>
+<div class="tbl scroll"><table id="all"></table></div>
+<p class="note" id="offernote"></p>
+<p><button class="btn ghost" id="csv" type="button">Download the ranking (CSV)</button> <a href="#controls" class="muted" style="margin-inline-start:12px">Change the settings ↓</a></p></section>
+<section class="panel"><h2>Every show: daily views vs. platform RPM</h2>
+<div class="hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" fill="currentColor"/></svg>Hover over any dot to see the show (tap on mobile).</div>
+<p class="note swipe">Swipe sideways to see the whole chart.</p>
+<div class="legend" id="legend"></div><div id="chart"></div>
+<p class="note">The dashed box is where both bars are met (set in Settings).</p></section>
+<section><h2>Shows to avoid</h2><div class="tbl"><table id="avoid"></table></div></section>
+<section><h2>Data check</h2><div class="cards" id="kpis"></div><ul id="checks"></ul></section>
+<section class="panel" id="controls"><h2>Settings</h2>
+<h3>Ranking</h3>
 <div class="ctl">
 <label>Reference date<input type="date" id="ref"></label>
 <label>Weight of daily views <output id="wv">70%</output><input type="range" id="w" min="0" max="100" step="5" value="70"></label>
@@ -126,19 +153,16 @@ details summary{cursor:pointer;color:var(--cyan);margin-bottom:8px}
 <label>How many to license<input type="number" id="topn" value="10" min="1" max="50"></label>
 <label>"Too little data" under (days)<input type="number" id="mdays" value="60" min="1"></label>
 </div>
-<p class="note">Platform RPM weight is the rest (100% minus the daily views weight). Everything recalculates as you change a setting.</p>
+<p class="note">Platform RPM weight is the rest (100% minus the daily views weight).</p>
+<h3>How much to offer (assumptions)</h3>
+<div class="ctl">
+<label>Share of its daily views we expect on our app (%)<input type="number" id="cap" value="20" min="0" max="100" step="5"></label>
+<label>Our revenue per 1,000 views ($, empty = its platform RPM)<input type="number" id="ourrpm" placeholder="platform RPM" min="0" step="5"></label>
+<label>License term (months)<input type="number" id="term" value="12" min="1" max="60"></label>
+<label>Share of expected revenue we would pay (%)<input type="number" id="pay" value="30" min="0" max="100" step="5"></label>
+</div>
+<p class="note">Everything above recalculates as you change a setting. The offer is a ceiling for the negotiation, not a price: real license terms, exclusivity and our own conversion data would replace these assumptions.</p>
 </section>
-
-<div id="out" hidden style="gap:40px">
-<section><h2>Data check</h2><div class="cards" id="kpis"></div><ul id="checks"></ul></section>
-<section><h2 id="toph">Top 10 to license</h2><div class="tbl"><table id="top"></table></div><p class="note" id="topnote"></p></section>
-<section><h2>Shows to avoid</h2><div class="tbl"><table id="avoid"></table></div></section>
-<section class="panel"><h2>Every show: daily views vs. platform RPM</h2>
-<div class="hint"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" fill="currentColor"/></svg>Hover over any dot to see the show (tap on mobile).</div>
-<div class="legend" id="legend"></div><div id="chart"></div>
-<p class="note">The dashed box is the target zone set above.</p></section>
-<section><h2>Full ranking</h2><details><summary>Show all shows with their score</summary><div class="tbl"><table id="all"></table></div></details>
-<p><button class="btn ghost" id="csv">Download the ranking (CSV)</button></p></section>
 </div>
 <a class="next" href="index.html"><span>That's everything</span><b>Back to the overview →</b></a>
 </main>
@@ -208,18 +232,30 @@ function analyze(raw,o){
  return {rows,ok,rpm,checks,top,avoid,median,zone,outside,removed:rows.length-ok.length+(raw.shows.length-rows.length)};}
 function colors(apps){const m={};let j=0;apps.forEach(a=>{m[a]=KNOWN[a]||PAL[(j++)%PAL.length];});return m;}
 function render(){if(!RAW)return;
- const o={ref:new Date($('ref').value+'T00:00:00Z'),w:+$('w').value/100,mdv:+$('mdv').value,mrpm:+$('mrpm').value,n:+$('topn').value,mdays:+$('mdays').value};
+ const o={ref:new Date($('ref').value+'T00:00:00Z'),w:+$('w').value/100,mdv:+$('mdv').value,mrpm:+$('mrpm').value,n:+$('topn').value,mdays:+$('mdays').value,
+  cap:+$('cap').value/100,our:$('ourrpm').value===''?null:+$('ourrpm').value,term:+$('term').value,pay:+$('pay').value/100};
  $('wv').textContent=$('w').value+'%';
  const R=analyze(RAW,o);LAST=R;const COL=colors(Object.keys(R.rpm).sort((a,b)=>R.rpm[b]-R.rpm[a]));
  const dot=a=>`<i class="dot" style="background:${COL[a]||'#888'}"></i>${esc(a)}`;
+ const scores=R.ok.map(r=>r.score).sort((a,b)=>a-b);const medS=scores[Math.floor(scores.length/2)];
+ const money=v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+Math.round(v/1e3)+'K';
+ R.ok.forEach(r=>{
+  if(R.top.includes(r)){r.status='lic';r.reason=r.days<o.mdays?`only ${r.days} days on the market`:'';}
+  else if(r.remakeOf){r.status='pas';r.reason='remake: license the original';}
+  else if(r.score>=medS){r.status='con';const why=[];if(r.dv<o.mdv)why.push('under '+fmtM(o.mdv)+' a day');if(r.rpm==null||r.rpm<o.mrpm)why.push('platform RPM under $'+o.mrpm);if(r.days<o.mdays)why.push(`only ${r.days} days`);if(!why.length)why.push('outside the top '+o.n);r.reason=why.join(', ');}
+  else{r.status='pas';r.reason='';}
+  const rpm=o.our??r.rpm??0;r.offer=r.dv*o.cap*rpm/1000*o.term*30.4*o.pay;});
+ const nL=R.ok.filter(r=>r.status==='lic').length,nC=R.ok.filter(r=>r.status==='con').length;
+ $('sum').innerHTML=[[nL,'to license'],[nC,'to consider'],[(medS*100).toFixed(1),'median score'],[money(R.top.reduce((s,r)=>s+r.offer,0)),'max offer for the top list']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
+ const B={lic:'<i class="badge lic">License</i>',con:'<i class="badge con">Consider</i>',pas:'<i class="badge pas">Pass</i>'};
+ let rows='',lined=false;
+ R.ok.forEach(r=>{if(!lined&&r.score<medS){rows+=`<tr class="medline"><td colspan="9"><div>Median score ${(medS*100).toFixed(1)}: below this line, don't buy</div></td></tr>`;lined=true;}
+  rows+=`<tr class="${r.status==='pas'?'pass':''}"><td class="n">${r.rank}</td><td>${esc(r.t)}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">${r.rpm==null?'–':'$'+r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td><td>${B[r.status]}<span class="muted" style="font-size:12px">${r.reason}</span></td><td class="n">${r.status==='pas'?'–':money(r.offer)}</td></tr>`;});
+ $('all').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th><th>Verdict</th><th>Max offer*</th></tr></thead><tbody>'+rows+'</tbody>';
+ $('offernote').innerHTML=`Score: daily views ${Math.round(o.w*100)}%, platform RPM ${100-Math.round(o.w*100)}%. "License" = the top ${o.n} that reach ${fmtM(o.mdv)} daily views on a platform with RPM of $${o.mrpm} or more, remakes excluded.<br>*Max offer = daily views × ${Math.round(o.cap*100)}% we expect to capture × ${o.our==null?'its platform RPM':'$'+o.our+' per 1,000 views'} × ${o.term} months × ${Math.round(o.pay*100)}% of that revenue. A ceiling for the negotiation, based on assumptions you can change in Settings.`;
  $('kpis').innerHTML=[[RAW.shows.length,'Rows in the file'],[R.ok.length,'Shows ranked'],[Object.keys(R.rpm).length,'Platforms'],[fmtM(R.median),'Median daily views']].map(([k,l])=>`<div class="card"><div class="k">${k}</div><p>${l}</p></div>`).join('');
  $('checks').innerHTML=R.checks.length?R.checks.map(c=>`<li>${c}</li>`).join(''):'<li>No problems found.</li>';
- $('toph').textContent=`Top ${o.n} to license`;
- $('top').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th></tr></thead><tbody>'+R.top.map((r,i)=>`<tr><td class="n">${i+1}</td><td>${esc(r.t)}${r.days<o.mdays?' *':''}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">$${r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td></tr>`).join('')+'</tbody>';
- const short=R.top.length<o.n?` Only ${R.top.length} shows meet both conditions; loosen the settings to see more.`:'';
- $('topnote').innerHTML=`Qualify: at least ${fmtM(o.mdv)} daily views and a platform RPM of $${o.mrpm} or more, remakes excluded. Then ordered by the score (daily views ${Math.round(o.w*100)}%, platform RPM ${100-Math.round(o.w*100)}%).`+(R.top.some(r=>r.days<o.mdays)?` * Under ${o.mdays} days on the market: the riskiest picks.`:'')+short+(R.outside.length?` High scorers left out by the conditions: ${R.outside.map(r=>esc(r.t)+' ('+esc(r.a)+')').join(', ')}.`:'');
  $('avoid').innerHTML='<thead><tr><th>Show</th><th>App</th><th>The trap</th><th>Why</th></tr></thead><tbody>'+(R.avoid.length?R.avoid.map(x=>`<tr><td>${esc(x.r.t)}</td><td class="app">${dot(x.r.a)}</td><td>${x.trap}</td><td>${x.why}</td></tr>`).join(''):'<tr><td colspan="4">Nothing flagged.</td></tr>')+'</tbody>';
- $('all').innerHTML='<thead><tr><th>#</th><th>Show</th><th>App</th><th>Daily views</th><th>Days</th><th>RPM</th><th>Score</th></tr></thead><tbody>'+R.ok.map(r=>`<tr><td class="n">${r.rank}</td><td>${esc(r.t)}</td><td class="app">${dot(r.a)}</td><td class="n">${fmtM(r.dv)}</td><td class="n">${r.days}</td><td class="n">${r.rpm==null?'–':'$'+r.rpm.toFixed(0)}</td><td class="n">${(r.score*100).toFixed(1)}</td></tr>`).join('')+'</tbody>';
  $('legend').innerHTML=Object.keys(COL).map(a=>`<span><i class="dot" style="background:${COL[a]}"></i>${esc(a)}</span>`).join('')+'<span><i class="sq"></i>Chinese original</span>';
  chart(R,o,COL);labelTables();}
 function chart(R,o,COL){const W=1000,H=520,L=70,Rm=20,T=20,B=50;const pts=R.ok.filter(r=>r.rpm!=null);
@@ -238,9 +274,9 @@ function chart(R,o,COL){const W=1000,H=520,L=70,Rm=20,T=20,B=50;const pts=R.ok.f
   g.addEventListener('pointermove',show);g.addEventListener('pointerdown',show);g.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')tip.style.display='none'});});}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('.pt'))$('tip').style.display='none'});
 function labelTables(){document.querySelectorAll('.tbl table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());
- t.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(h[0]==='#'&&i<2)td.classList.add('num','lead-cell');else if(i===0&&h[0]==='Show')td.classList.add('lead-cell');else if(h[i])td.setAttribute('data-label',h[i]);});
+ t.querySelectorAll('tbody tr:not(.medline)').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(h[0]==='#'&&i<2)td.classList.add('num','lead-cell');else if(i===0&&h[0]==='Show')td.classList.add('lead-cell');else if(td.colSpan>1)return;else if(h[i])td.setAttribute('data-label',h[i]);});
   if(h[0]==='#'&&tr.children[0]&&!tr.children[0].textContent.startsWith('#'))tr.children[0].textContent='#'+tr.children[0].textContent;});});}
-function load(raw,label){RAW=raw;$('ref').value=guessRef(raw.notes).toISOString().slice(0,10);$('controls').hidden=false;$('out').hidden=false;
+function load(raw,label){RAW=raw;$('ref').value=guessRef(raw.notes).toISOString().slice(0,10);$('out').hidden=false;
  $('status').textContent=`Loaded ${label}: ${raw.shows.length} rows, ${raw.rev.length} platforms. Reference date read from the file: ${$('ref').value}.`;render();}
 $('sample').onclick=(e)=>{e.preventDefault();load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');};
 function readFile(f){if(typeof XLSX==='undefined'){$('status').textContent='The Excel reader did not load. Check your connection and refresh.';return;}$('status').textContent='Reading '+f.name+'...';const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});load(parseWB(wb),f.name);}catch(err){$('status').textContent='Could not read this file: '+err.message;}};rd.readAsArrayBuffer(f);}
@@ -249,8 +285,8 @@ $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(/\.gsheet$/i.te
 $('gsgo').onclick=loadGS;$('gs').addEventListener('keydown',e=>{if(e.key==='Enter')loadGS();});
 const dz=$('drop');['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('on')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('on')}));
 dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&readFile(e.dataTransfer.files[0]));
-['ref','w','mdv','mrpm','topn','mdays'].forEach(id=>$(id).addEventListener('input',render));
-$('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','In top list','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),LAST.top.includes(r)?'Yes':'',r.remakeOf?r.remakeOf.t:'']));
+['ref','w','mdv','mrpm','topn','mdays','cap','ourrpm','term','pay'].forEach(id=>$(id).addEventListener('input',render));
+$('csv').onclick=()=>{if(!LAST)return;const lines=[['Rank','Show','App','Days','Daily views','Platform RPM','Score','Verdict','Reason','Max offer ($)','Remake of']].concat(LAST.ok.map(r=>[r.rank,r.t,r.a,r.days,Math.round(r.dv),r.rpm==null?'':r.rpm.toFixed(2),(r.score*100).toFixed(1),{lic:'License',con:'Consider',pas:'Pass'}[r.status],r.reason,r.status==='pas'?'':Math.round(r.offer),r.remakeOf?r.remakeOf.t:'']));
  const csv=lines.map(l=>l.map(v=>/[",]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':v).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='licensing_ranking.csv';a.click();};
 </script>
 </body></html>

@@ -127,8 +127,8 @@ tr.medline td div{font-size:12px;color:#ff6fa6;padding:6px 12px;font-weight:600}
 <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.ods,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" class="sr"></div>
 <div class="gs"><span class="muted">or paste a Google Sheets link</span>
 <div class="gsrow"><input type="url" id="gs" placeholder="https://docs.google.com/spreadsheets/d/..." aria-label="Google Sheets link"><button class="btn ghost" id="gsgo" type="button">Load</button></div></div>
-<p class="note">Expected: one tab of shows (title, app, release date, views) and one tab of app revenue (app, revenue). Column names are matched loosely. A Google Sheet must be shared as "Anyone with the link can view".</p>
-<p class="note">No file at hand? <a href="#" id="sample">Load the assignment data</a>.</p>
+
+
 </div>
 <p class="note" id="status" role="status"></p>
 </section>
@@ -283,7 +283,7 @@ function labelTables(){document.querySelectorAll('.tbl table').forEach(t=>{const
   if(h[0]==='#'&&tr.children[0]&&!tr.children[0].textContent.startsWith('#'))tr.children[0].textContent='#'+tr.children[0].textContent;});});}
 function load(raw,label){RAW=raw;$('ref').value=guessRef(raw.notes).toISOString().slice(0,10);$('out').hidden=false;
  $('status').textContent=`Loaded ${label}: ${raw.shows.length} rows, ${raw.rev.length} platforms. Reference date read from the file: ${$('ref').value}.`;render();}
-$('sample').onclick=(e)=>{e.preventDefault();load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');};
+if($('sample'))$('sample').onclick=(e)=>{e.preventDefault();load({shows:SAMPLE.shows.map(r=>[r[0],r[1],r[2]?new Date(r[2]+'T00:00:00Z'):null,r[3]]),rev:SAMPLE.revenue.filter(r=>typeof r[1]==='number'),notes:SAMPLE.revenue.filter(r=>typeof r[1]!=='number').map(r=>r[0]).join(' ')},'the assignment data');};
 function readFile(f){if(typeof XLSX==='undefined'){$('status').textContent='The Excel reader did not load. Check your connection and refresh.';return;}$('status').textContent='Reading '+f.name+'...';const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});load(parseWB(wb),f.name);}catch(err){$('status').textContent='Could not read this file: '+err.message;}};rd.readAsArrayBuffer(f);}
 $('pick').onclick=()=>$('file').click();
 $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(/\.gsheet$/i.test(f.name)){$('status').textContent='That is a Google Sheets shortcut, not the file itself. Paste the sheet link instead.';return;}readFile(f);e.target.value='';};

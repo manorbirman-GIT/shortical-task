@@ -160,7 +160,7 @@ details.more[open]>summary{margin-bottom:10px}
     <div class="pbtext">
       <h3 style="margin:18px 0 6px">The three groups</h3>
       <p><b>Peak and breather: Hockey Star, Doctor Boss, Triplets.</b> A shock episode, then a calmer one that builds the characters. The highest pull scores (2.8–3.0).</p>
-      <p><b>No peak: Final Boss, Genie.</b> Steady and slow: no episode above 1.2 big twists a minute. Pull 2.5 and 1.8.</p>
+      <p><b>No peak: Final Boss, Genie.</b> Steady and slow: no episode above 1.2 big twists a minute, across four episodes. Pull 2.0 and 1.9.</p>
       <p><b>No breather: Queen's Heart.</b> Every episode at 1.7 big twists a minute or more. Constant shocks, the lowest emotion score (1.0), pull 2.0.</p>
       <p><b>What it means for Shortical:</b> plan a peak episode, then a breather; check the rhythm of the first episodes before licensing a series; and in AI productions, add locations, which cost little.</p>
     </div>
@@ -178,9 +178,9 @@ const S=[
   hero:"Molly McGuire",open:"Weak",power:"He is stronger",villain:"Adoptive mother Deborah, the creepy doctor, the fiancée",saves:"The man",promise:"Cinderella with a secret baby and a rich protector."},
  {id:"triplets",genres:"Medical reveal, workplace bullying with a comic-relief beat (the girls pitching themselves to Sinclair), family abuse drama, romance",sex:'A paid night, a light sex scene in the bar episode',viol:'The most explicit of the six: the father beats her, blood (trailer and ad)',n:"Carrying His Triplets, Becoming His Wifey",s:"Triplets",big:1.08,all:2.5,pull:3.0,emo:2.0,shot:1.9,music:2.0,fx:2.2,chars:4.7,vo:"1/3",voP:33,cliff:"3/3",cliffP:100,shotType:"Close-up",cam:"Static",prod:"Filmed",eps:"2–4",
   hero:"Daisy Miller, 19, warehouse worker",open:"Weak",power:"He is stronger",villain:"Her father John and brother, her coworkers",saves:"The man",promise:"A millionaire will protect me and the babies from everyone who hurt me."},
- {id:"finalboss",genres:"War flashback (action), contract-marriage romance, humiliation and revenge",sex:'No',viol:'War flashback with gunfire, a slap (trailer)',n:"Move Aside! I'm the Final Boss",s:"Final Boss",big:0.80,all:1.07,pull:2.5,emo:1.5,shot:3.3,music:1.6,fx:0.8,chars:3.0,vo:"2/2",voP:100,cliff:"2/2",cliffP:100,shotType:"Medium / close-up",cam:"Static",prod:"Filmed",eps:"1–2",
+ {id:"finalboss",genres:"War flashback (action), contract-marriage romance, humiliation and revenge",sex:'No',viol:'War flashback with gunfire, a slap (trailer)',n:"Move Aside! I'm the Final Boss",s:"Final Boss",big:0.80,all:1.07,pull:2.0,emo:1.5,shot:3.3,music:1.6,fx:0.8,chars:3.0,vo:"2/2",voP:100,cliff:"2/2",cliffP:100,shotType:"Medium / close-up",cam:"Static",prod:"Filmed",eps:"1–2",
   hero:"Kingsley Baldwin",open:"Weak",power:"Reversal over the series",villain:"The people who mock him",saves:"Hidden identity",promise:"The people who mocked me will find out I'm the king."},
- {id:"genie",genres:"Fantasy, a period prologue (1966), corporate contract-marriage romance",sex:'No',viol:'No',n:"The Great and Powerful Genie",s:"Genie",big:0.84,all:1.1,pull:1.8,emo:1.8,shot:3.4,music:1.3,fx:1.3,chars:3.5,vo:"1/2",voP:50,cliff:"1/2",cliffP:50,shotType:"Medium",cam:"Static",prod:"Fully AI",eps:"1–2",
+ {id:"genie",genres:"Fantasy, a period prologue (1966), corporate contract-marriage romance",sex:'No',viol:'No',n:"The Great and Powerful Genie",s:"Genie",big:0.84,all:1.1,pull:1.9,emo:1.8,shot:3.4,music:1.3,fx:1.3,chars:3.5,vo:"1/2",voP:50,cliff:"1/2",cliffP:50,shotType:"Medium",cam:"Static",prod:"Fully AI",eps:"1–2",
   hero:"Steven (ep 1), Christine Parrish (from ep 2)",open:"Strong",power:"She is stronger",villain:"Suspected until ep 4: the wife, the father's granddaughter",saves:"Supernatural power",promise:"A magic protector hiding as a contract-marriage husband."},
  {id:"queen",genres:"One genre throughout: dramatic relationship drama (betrayal, public humiliation, hidden-identity revenge), in one location",sex:'No',viol:'Humiliation: she has her hand stepped on',n:"Never Break a Queen's Heart",s:"Queen's Heart",big:1.99,all:2.8,pull:2.0,emo:1.0,shot:2.4,music:2.2,fx:4.2,chars:4.0,vo:"3/3",voP:100,cliff:"3/3",cliffP:100,shotType:"Medium",cam:"Static",prod:"Fully AI",eps:"2–4",
   hero:"Chloe",open:"Weak",power:"Reversal over the series",villain:"Trevor (her husband) and Mia Bell",saves:"Hidden identity / inheritance",promise:"The people who humiliated me will find out who I really am."}
@@ -228,8 +228,8 @@ const T=[
  {k:"overview",h:1,l:"Twists vs pull",type:"scatter",title:"Big twists per minute vs pull",scale:"X: 0–2.2 big twists per minute · Y: pull 1–4",
   take:"The average alone doesn't explain pull: Doctor Boss, Genie and Final Boss all sit at 0.8–0.9 big twists per minute. What separates them is rhythm. The high-pull series have at least one peak episode (1.4 or more) and one breather (0.8 or less). Final Boss and Genie have no peak; Queen's Heart has no breather.",
   as:["Big twists per minute = total big twists ÷ total episode length in seconds × 60.",TW,SC]},
- {k:"pb",l:"Peak and breather",h:1,type:"groups",groups:[["Peak and breather",[["hockey","1.7 · 0.4 · 1.9 · 0.8"],["doctor","1.4 · 0 · 0.6 · 1.1"],["triplets","1.7 · 1.4 · 0.8"]]],["No peak",[["finalboss","0.9 · 0.7"],["genie","0.6 · 1.2"]]],["No breather",[["queen","1.9 · 1.7 · 2.6"]]]],title:"Peak and breather: the rhythm of big twists",scale:"Big twists per minute, episode by episode",
-  take:"Grouped by rhythm, not by average. Some series have a peak episode and a breather episode; some have no peak; one has no breather.",
+ {k:"pb",l:"Peak and breather",h:1,type:"groups",groups:[["Peak and breather",[["hockey","1.7 · 0.4 · 1.9 · 0.8"],["doctor","1.4 · 0 · 0.6 · 1.1"],["triplets","1.7 · 1.4 · 0.8"]]],["No peak",[["finalboss","0.9 · 0.7 · 1.1 · 0"],["genie","0.6 · 1.2 · 0.3 · 0.5"]]],["No breather",[["queen","1.9 · 1.7 · 2.6"]]]],title:"Peak and breather: the rhythm of big twists",scale:"Big twists per minute, episode by episode",
+  take:"Grouped by rhythm, not by average. Some series have a peak episode and a breather episode; some have no peak; one has no breather. Final Boss and Genie episodes 3–4 were added after submission; the pattern holds.",
   as:["Peak episode: 1.4 or more big twists per minute. Breather episode: 0.8 or less.","Numbers in brackets are big twists per minute in each episode, in order.","The thresholds were set after looking at the data. This is a hypothesis to test with more viewers and series."]},
  {k:"profiles",l:"Series profiles",h:1,type:"profiles",title:"Promise, genres, and who saves",scale:"Qualitative",
   take:"Two story engines repeat: a powerful man protects a vulnerable female lead (Doctor Boss, Triplets, Genie), or a humiliated character reveals a hidden status (Queen's Heart, Final Boss, Hockey Star).",
@@ -346,7 +346,7 @@ document.getElementById("sums").innerHTML=S.map(d=>`<article class="sum"><h3>${e
 show((location.hash||"").slice(1)||"genre");
 
 (function(){
- const P=[["Hockey Star",1.9,0.4],["Doctor Boss",1.4,0],["Triplets",1.7,0.8],["Final Boss",0.9,0.7],["Genie",1.2,0.6],["Queen's Heart",2.6,1.7]];
+ const P=[["Hockey Star",1.9,0.4],["Doctor Boss",1.4,0],["Triplets",1.7,0.8],["Final Boss",1.1,0],["Genie",1.2,0.3],["Queen's Heart",2.6,1.7]];
  const W=560,H=340,L=48,R=20,T=16,B=44,M=2.8,X=v=>L+v/M*(W-L-R),Y=v=>T+(1-v/2)*(H-T-B);
  const t=(x,y,s,o)=>`<text x="${x}" y="${y}" font-size="${o.fs||11}" text-anchor="${o.a||'start'}" fill="${o.c||'rgba(255,255,255,.5)'}" ${o.w?'font-weight="600"':''}>${s}</text>`;
  let g=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Each series: strongest episode vs calmest episode">`;
@@ -357,7 +357,7 @@ show((location.hash||"").slice(1)||"genre");
  [0,1,2].forEach(v=>g+=t(L-8,Y(v)+4,v,{a:"end"}));[0,1,2].forEach(v=>g+=t(X(v),H-B+18,v,{a:"middle"}));
  g+=t((L+W-R)/2,H-6,"Strongest episode (big twists per minute) → peak at 1.4+",{a:"middle"});
  g+=`<text transform="translate(13 ${(T+H-B)/2}) rotate(-90)" font-size="11" text-anchor="middle" fill="rgba(255,255,255,.5)">Calmest episode → breather at 0.8 or less</text>`;
- const off={"Final Boss":[0,-10,"middle"],"Genie":[0,18,"middle"],"Triplets":[0,-10,"middle"],"Hockey Star":[0,-10,"middle"],"Doctor Boss":[8,-6,"start"],"Queen's Heart":[-9,4,"end"]};
+ const off={"Final Boss":[-9,4,"end"],"Genie":[0,-10,"middle"],"Triplets":[0,-10,"middle"],"Hockey Star":[0,-10,"middle"],"Doctor Boss":[8,-6,"start"],"Queen's Heart":[-9,4,"end"]};
  P.forEach(([n,x,y])=>{const good=x>=1.4&&y<=0.8,c=good?"#F70367":"#32DCFF",o=off[n];
   g+=`<circle cx="${X(x)}" cy="${Y(y)}" r="6" fill="${c}"/>`+t(X(x)+o[0],Y(y)+o[1],n,{a:o[2],c,w:1,fs:12});});
  g+="</svg>";

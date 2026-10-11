@@ -63,7 +63,13 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .tl .row{position:relative;height:28px}
 .tl .bands .band{position:absolute;top:0;bottom:0;background:var(--surf2);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;align-items:center;padding-inline:6px}
 .tl .band span{font-size:12px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tl .ticks i{position:absolute;top:4px;width:3px;height:20px;margin-left:-1px;border-radius:2px;background:var(--pink)}
+.tl .ticks i{position:absolute;top:4px;width:3px;height:20px;margin-left:-1px;border-radius:2px;background:var(--pink);cursor:pointer}
+.tl .ticks i::before{content:'';position:absolute;inset:-6px -7px}
+.tl .ticks i.wide{margin-left:0}
+.tl .ticks i:hover{filter:brightness(1.4)}
+.tl .ticks i:hover::after{content:attr(data-tip);position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:#0A0A0A;border:1px solid var(--line);color:#fff;font-size:12px;line-height:1.5;padding:6px 10px;border-radius:6px;white-space:pre;font-style:normal;z-index:4;pointer-events:none}
+.tl .ticks i.l:hover::after{left:0;transform:none}
+.tl .ticks i.r:hover::after{left:auto;right:0;transform:none}
 .tl .rh i{position:absolute;top:6px;height:16px;border-radius:4px;min-width:4px}
 .tl .axis{display:flex;justify-content:space-between;font-size:12px;color:var(--fg3)}
 .sw{display:inline-block;width:14px;height:10px;border-radius:3px}
@@ -104,7 +110,7 @@ details.more{display:grid;gap:12px}
 <p class="lead" style="margin:0">The linked creative runs about 14 minutes: a long-form ad of early episodes, recut and reordered, ending just before the payoff.</p>
 <div class="panel"><h3>The ad at a glance</h3>
 <div class="tl" id="tl1"></div>
-<p class="note">Each tick is a big twist: the 10 big twists out of 35 turning points I identified. A big twist changes the story's direction or the balance of power.</p></div>
+<p class="note">Each tick is a big twist: the 10 big twists out of 35 turning points I identified. A big twist changes the story's direction or the balance of power. Hover over a tick to see the twist.</p></div>
 <div class="two">
 <div class="panel"><div class="eyebrow">The hook · 0:00-0:34</div><h3>What happens</h3><p style="margin:0;color:var(--fg2)">A hospital bed. 'You're pregnant' (0:04), 'with triplets' (0:05), 'he told me he was sterile' (0:13), and she doesn't know who the father is.</p></div>
 <div class="panel"><div class="eyebrow">Why it works</div><h3>It opens on the result</h3><p style="margin:0;color:var(--fg2)">Three shocks in 15 seconds set up the premise and plant three questions: how, who, and how will she manage?</p></div>
@@ -201,12 +207,12 @@ details.more{display:grid;gap:12px}
 (()=>{const f=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 function tl(id,total,bands,marks,rhythm){const p=v=>(v/total*100).toFixed(2)+'%';
  let h='<div class="row bands">'+bands.map(([a,b,l])=>`<div class="band" style="left:${p(a)};width:${p(b-a)}" title="${l} · ${f(a)}-${f(b)}"><span>${l}</span></div>`).join('')+'</div>';
- if(marks)h+='<div class="row ticks">'+marks.map(([t,l])=>`<i style="left:${p(t)}" title="${f(t)} · ${l}"></i>`).join('')+'</div>';
+ if(marks)h+='<div class="row ticks">'+marks.map(([t,l,e])=>`<i class="${e?'wide ':''}${t/total<.12?'l':t/total>.85?'r':''}" style="left:${p(t)}${e?';width:'+p(e-t):''}" data-tip="${e?l:f(t)+' · '+l}" aria-label="${e?l:f(t)+' · '+l}"></i>`).join('')+'</div>';
  if(rhythm)h+='<div class="row rh">'+rhythm.map(([a,b,k,l])=>`<i style="left:${p(a)};width:${p(b-a)};background:var(--${k=='P'?'pink':'cyan'})" title="${k=='P'?'Peak':'Breather'} · ${l} · ${f(a)}-${f(b)}"></i>`).join('')+'</div>';
  h+=`<div class="axis"><span>0:00</span><span>${f(total)}</span></div>`;
  document.getElementById(id).innerHTML=h;}
 tl('tl1',840,[[0,34,'Hook'],[40,175,'Act 1'],[190,365,'Act 2'],[375,815,'Act 3'],[815,830,'Peak']],
- [[4,'She is pregnant'],[5,'With triplets'],[73,'He drinks the drug'],[288,'His parents learn'],[300,'He thinks she trapped him'],[415,'Forced to marry a 70-year-old'],[467,'The bottle'],[547,'She names the father'],[690,'He sets off, no answer'],[830,'He runs toward her. Cut.']]);
+ [[0,'Hook: 2 big twists in 15 seconds\n0:04 · She is pregnant\n0:05 · With triplets',15],[73,'He drinks the drug'],[288,'His parents learn'],[300,'He thinks she trapped him'],[415,'Forced to marry a 70-year-old'],[467,'The bottle'],[547,'She names the father'],[690,'He sets off, no answer'],[830,'He runs toward her. Cut.']]);
 tl('tl2',494,[[0,11,'Open'],[11,221,'Act 1: how'],[221,327,'Act 2: her world'],[327,386,'Club'],[386,442,'Holtz'],[442,462,'Broom'],[462,494,'End']],null,
  [[0,11,'P','The pregnancy'],[31,56,'P','The drug and the chase'],[121,191,'B','The love scene in the car'],[327,386,'P','The nightclub'],[386,442,'B','Her mother and Mr. Holtz'],[442,494,'P','The broom, then the ending']]);
 })();

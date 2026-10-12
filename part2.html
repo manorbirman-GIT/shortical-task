@@ -67,6 +67,7 @@ footer{color:var(--fg3);font-size:13px;border-top:1px solid var(--line);padding-
 .tl .ticks i::before{content:'';position:absolute;inset:-6px -7px}
 .tl .ticks i.wide{margin-left:0}
 .tl .ticks i:hover{filter:brightness(1.4)}
+#tl2 .ticks i{background:#fff;width:2px}
 .tl .ticks i:hover::after{content:attr(data-tip);position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:#0A0A0A;border:1px solid var(--line);color:#fff;font-size:12px;line-height:1.5;padding:6px 10px;border-radius:6px;white-space:pre;font-style:normal;z-index:4;pointer-events:none}
 .tl .ticks i.l:hover::after{left:0;transform:none}
 .tl .ticks i.r:hover::after{left:auto;right:0;transform:none}
@@ -163,7 +164,7 @@ details.more{display:grid;gap:12px}
 </div></div>
 <div class="panel"><h3>The ad at a glance</h3>
 <div class="tl" id="tl2"></div>
-<div class="legend"><span><i class="sw" style="background:var(--pink)"></i>Peak</span><span><i class="sw" style="background:var(--cyan)"></i>Breather</span></div><h3>Peaks and breathers</h3><div class="tbl"><table><thead><tr><th>Ad time</th><th>Rhythm</th><th>Scene</th></tr></thead><tbody><tr><td class="n">0:00-0:11</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The pregnancy</td></tr><tr><td class="n">0:31-0:56</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The drug and the chase</td></tr><tr><td class="n">2:01-3:11</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The love scene in the car</td></tr><tr><td class="n">5:27-6:26</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The nightclub</td></tr><tr><td class="n">6:26-7:22</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The confrontation at home with her mother and Mr. Holtz</td></tr><tr><td class="n">7:22-7:42</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The broom, then the ending</td></tr></tbody></table></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--pink)"></i>Peak</span><span><i class="sw" style="background:var(--cyan)"></i>Breather</span></div><h3>Peaks and breathers</h3><div class="tbl"><table><thead><tr><th>Ad time</th><th>Rhythm</th><th>Scene</th></tr></thead><tbody><tr><td class="n">0:00-0:11</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The pregnancy</td></tr><tr><td class="n">0:31-0:56</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The drug and the chase</td></tr><tr><td class="n">2:01-3:11</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The love scene in the car</td></tr><tr><td class="n">5:27-6:26</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The nightclub</td></tr><tr><td class="n">6:26-7:22</td><td><i class="sw" style="background:var(--cyan);margin-inline-end:6px"></i>Breather</td><td>The confrontation at home with her mother and Mr. Holtz</td></tr><tr><td class="n">7:22-7:42</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The broom. Ending B stops here</td></tr><tr><td class="n">7:42-8:14</td><td><i class="sw" style="background:var(--pink);margin-inline-end:6px"></i>Peak</td><td>The closing cliffhanger: the hospital, her abortion request, Graham walks in (Ending A, my cut)</td></tr></tbody></table></div><p class="note">The white tick at 7:42 marks the A/B cut point. Two tests I would run: Ending A (8:14) vs Ending B (7:42), and this 8-minute ad vs a 14-minute version as the control.</p></div>
 <div class="panel"><details class="more"><summary>The ad, beat by beat</summary>
 <p class="note">Source timecodes refer to the official ReelShort videos: <a href="https://www.youtube.com/watch?v=DA9d2QEhyyM">V1 = EP1-9</a>, <a href="https://www.youtube.com/watch?v=kknUuMvFg0k">V2 = EP9-20</a>.</p>
 <div class="tbl"><table><thead><tr><th>Ad time</th><th>Source</th><th>Beat</th></tr></thead><tbody>
@@ -198,7 +199,8 @@ details.more{display:grid;gap:12px}
 <tr><td>Why test it</td><td>A stronger character moment. This is my cut.</td><td>Closest to Triplets, and safer for ad platforms</td></tr>
 </tbody></table></div>
 <ul><li><b>What I measure:</b> conversion, how many reach the paywall per 1,000 ad impressions. I also watch how many open the app and start watching.</li>
-<li><b>Decision rule:</b> run both endings to the same audience; the one with the better conversion wins.</li></ul></div>
+<li><b>Decision rule:</b> run both endings to the same audience; the one with the better conversion wins.</li>
+<li><b>Second test, length:</b> the winning ending vs a 14-minute version as the control, to check that the shorter ad really works better.</li></ul></div>
 <div class="panel"><details class="more"><summary>Length</summary><p style="margin:0;color:var(--fg2)">8:14 or 7:42, well under the 14-minute Triplets ad, which felt too long to my test group. I watched about 15 more episodes in the ReelShort app and chose not to add more storylines: my test group said the ad should stay focused. In the real world I would let the data decide (where viewers drop off, which peaks hold them); without per-episode or per-second data, I relied on my test group.</p></details></div>
 </section>
 <a class="next" href="part3.html"><span>Next</span><b>Part 3: Licensing →</b></a>
@@ -213,8 +215,8 @@ function tl(id,total,bands,marks,rhythm){const p=v=>(v/total*100).toFixed(2)+'%'
  document.getElementById(id).innerHTML=h;}
 tl('tl1',840,[[0,34,'Hook'],[40,175,'Act 1'],[190,365,'Act 2'],[375,815,'Act 3'],[815,830,'Peak']],
  [[0,'Hook: three shocks in 15 seconds\n0:04 · She is pregnant (big twist)\n0:05 · With triplets (big twist)\n0:13 · “He told me he was sterile”',15],[73,'He drinks the drug'],[288,'His parents learn'],[300,'He thinks she trapped him'],[415,'Forced to marry a 70-year-old'],[467,'The bottle'],[547,'She names the father'],[690,'He sets off, no answer'],[830,'He runs toward her. Cut.']]);
-tl('tl2',494,[[0,11,'Open'],[11,221,'Act 1: how'],[221,327,'Act 2: her world'],[327,386,'Club'],[386,442,'Holtz'],[442,462,'Broom'],[462,494,'End']],null,
- [[0,11,'P','The pregnancy'],[31,56,'P','The drug and the chase'],[121,191,'B','The love scene in the car'],[327,386,'P','The nightclub'],[386,442,'B','Her mother and Mr. Holtz'],[442,494,'P','The broom, then the ending']]);
+tl('tl2',494,[[0,11,'Open'],[11,221,'Act 1: how'],[221,327,'Act 2: her world'],[327,386,'Club'],[386,442,'Holtz'],[442,462,'Broom'],[462,494,'End']],[[462,'A/B cut point\nEnding B ends here\nEnding A runs to 8:14']],
+ [[0,11,'P','The pregnancy'],[31,56,'P','The drug and the chase'],[121,191,'B','The love scene in the car'],[327,386,'P','The nightclub'],[386,442,'B','Her mother and Mr. Holtz'],[442,462,'P','The broom (Ending B ends here)'],[462,494,'P','The closing cliffhanger (Ending A)']]);
 })();
 </script>
 <script>
